@@ -212,12 +212,25 @@ img, video { display: block; max-width: 100%; }
   padding: 0 20px 10px;
   width: max-content !important; 
   min-width: max-content;
-  animation: marqueeAnimate 32000ms linear infinite;
+  
+  /* CRÍTICO: Executa a animação nativa por 32 segundos em loop infinito */
+  animation: marqueeAnimate 32000ms linear infinite !important;
   will-change: transform;
 }
 
 .reel--paused .reel__track {
-  animation-play-state: paused;
+  animation-play-state: paused !important;
+}
+
+/* NOVO BLOCO: A engrenagem que faz o CSS mover os vídeos infinitamente */
+@keyframes marqueeAnimate {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    /* Move exatamente metade da pista (já que duplicamos os vídeos no HTML) */
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .reel__slide {
