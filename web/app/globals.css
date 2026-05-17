@@ -279,29 +279,6 @@ img, video { display: block; max-width: 100%; }
   -webkit-transform: translateZ(0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-
-  .reel__slide--dup {
-    display: none !important;
-  }
-
-  .reel__track {
-    flex-wrap: wrap;
-    justify-content: center;
-
-    width: 100%;
-    min-width: 100%;
-    max-width: 1200px;
-
-    margin: 0 auto;
-  }
-
-  .reel__slide {
-    width: min(42vw, 200px);
-    flex-basis: min(42vw, 200px);
-  }
-}
-
 /* Canvas mock */
 .canvas-mock {
   margin-top: 36px;
