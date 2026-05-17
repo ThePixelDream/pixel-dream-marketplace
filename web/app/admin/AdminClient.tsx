@@ -8,15 +8,27 @@ import { createBrowserClient } from "@supabase/ssr";
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-function supabase() {
+function sb() {
   return createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
+// ── CONSTANTS ────────────────────────────────────────────────
+const TITLE_OPTIONS = ["BRUNETTE", "EBONY", "ASIAN", "LATINA", "REDHEAD", "BLONDE"] as const;
+type TitleBase = (typeof TITLE_OPTIONS)[number];
+
+const DEFAULT_TAGS = [
+  "cosplay", "muscular", "trans", "small tits", "milf", "pawg",
+  "slim", "big tits", "curvy", "teen", "latina", "asian",
+  "ebony", "redhead", "blonde", "brunette", "girl next door",
+];
+
+const PLAN_PRICES = { basic: 549, pro: 649, premium: 799 };
+
+// ── TYPES ────────────────────────────────────────────────────
 type Product = {
   id: string;
   title: string;
   slug: string;
-  description: string;
   tags: string[];
   cover_image_url: string;
   avatar_image_url: string;
@@ -52,54 +64,153 @@ type Commission = {
   profiles: { email: string };
 };
 
-type HeroVideo = { url: string; poster: string };
+type HeroVideo = { url: string };
 
-const s = {
-  page: { minHeight: "100vh", background: "#f5f5f7", fontFamily: "Inter, sans-serif" } as const,
-  nav: { background: "#fff", borderBottom: "1px solid #e8e8ed", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56 } as const,
-  navTitle: { fontWeight: 800, fontSize: 16, color: "#111" } as const,
-  tabs: { display: "flex", gap: 4, padding: "16px 24px 0", maxWidth: 1100, margin: "0 auto" } as const,
-  tab: (active: boolean) => ({ padding: "10px 20px", borderRadius: "10px 10px 0 0", border: "none", background: active ? "#fff" : "transparent", color: active ? "#111" : "#6e6e78", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }) as const,
-  content: { maxWidth: 1100, margin: "0 auto", padding: "0 24px 60px" } as const,
-  card: { background: "#fff", border: "1px solid #e8e8ed", borderRadius: "0 16px 16px 16px", padding: 24, marginBottom: 16 } as const,
-  sectionTitle: { fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#111" } as const,
-  label: { display: "grid", gap: 6, marginBottom: 12 } as const,
-  labelText: { fontWeight: 600, fontSize: 14, color: "#333" } as const,
-  input: { height: 44, padding: "0 12px", borderRadius: 10, border: "1px solid #e8e8ed", fontSize: 14, width: "100%", fontFamily: "inherit" } as const,
-  textarea: { padding: 12, borderRadius: 10, border: "1px solid #e8e8ed", fontSize: 14, width: "100%", fontFamily: "inherit", resize: "vertical" as const },
-  grid2: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 } as const,
-  grid3: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 } as const,
-  btn: { height: 44, borderRadius: 999, border: "none", background: "#111", color: "#fff", fontWeight: 800, cursor: "pointer", padding: "0 24px", fontSize: 14, fontFamily: "inherit" } as const,
-  btnPink: { height: 44, borderRadius: 999, border: "none", background: "#e91e8c", color: "#fff", fontWeight: 800, cursor: "pointer", padding: "0 24px", fontSize: 14, fontFamily: "inherit" } as const,
-  btnOutline: { height: 36, borderRadius: 8, border: "1px solid #e8e8ed", background: "#fff", fontWeight: 600, cursor: "pointer", padding: "0 14px", fontSize: 13, fontFamily: "inherit" } as const,
-  uploadArea: { border: "2px dashed #e8e8ed", borderRadius: 12, padding: 20, textAlign: "center" as const, cursor: "pointer", color: "#6e6e78", fontSize: 14 } as const,
-  previewRow: { display: "flex", gap: 10, flexWrap: "wrap" as const, marginTop: 10 } as const,
-  preview: { width: 80, height: 80, borderRadius: 8, objectFit: "cover" as const, border: "1px solid #e8e8ed" } as const,
-  tag: { display: "inline-flex", alignItems: "center", gap: 4, background: "#f0f0f5", borderRadius: 6, padding: "3px 8px", fontSize: 12, fontWeight: 500, color: "#333" } as const,
-  tagsRow: { display: "flex", gap: 6, flexWrap: "wrap" as const, marginTop: 6 } as const,
-  badge: (color: string) => ({ display: "inline-block", padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: color === "green" ? "#dcfce7" : color === "red" ? "#fee2e2" : "#f3f4f6", color: color === "green" ? "#16a34a" : color === "red" ? "#dc2626" : "#555" }) as const,
-  table: { width: "100%", borderCollapse: "collapse" as const, fontSize: 13 } as const,
-  th: { textAlign: "left" as const, padding: "8px 12px", fontWeight: 700, borderBottom: "1px solid #e8e8ed", color: "#6e6e78", fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.06em" } as const,
-  td: { padding: "10px 12px", borderBottom: "1px solid #f5f5f7", verticalAlign: "middle" as const } as const,
+// ── COLORS ───────────────────────────────────────────────────
+const C = {
+  bg: "#0f0f10",
+  surface: "#1a1a1f",
+  surface2: "#222228",
+  border: "#2e2e36",
+  text: "#f0f0f2",
+  muted: "#7a7a8a",
+  pink: "#e91e8c",
+  green: "#22c55e",
+  red: "#ef4444",
 };
 
-function slugify(text: string) {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const S = {
+  page: { minHeight: "100vh", background: C.bg, fontFamily: "Inter, sans-serif", color: C.text } as const,
+  nav: { background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56 } as const,
+  statsBar: { background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "12px 24px" } as const,
+  statsInner: { maxWidth: 1100, margin: "0 auto", display: "flex", gap: 32 } as const,
+  tabs: { display: "flex", borderBottom: `1px solid ${C.border}`, maxWidth: 1100, margin: "0 auto", padding: "16px 24px 0" } as const,
+  tab: (on: boolean) => ({ padding: "10px 20px", borderRadius: "10px 10px 0 0", border: "none", background: on ? C.surface : "transparent", color: on ? C.text : C.muted, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }) as const,
+  content: { maxWidth: 1100, margin: "0 auto", padding: "0 24px 60px" } as const,
+  card: { background: C.surface, border: `1px solid ${C.border}`, borderRadius: "0 16px 16px 16px", padding: 24, marginBottom: 16 } as const,
+  sectionTitle: { fontSize: 18, fontWeight: 800, marginBottom: 20, color: C.text } as const,
+  label: { display: "grid", gap: 6, marginBottom: 16 } as const,
+  labelText: { fontWeight: 600, fontSize: 13, color: C.muted } as const,
+  input: { height: 44, padding: "0 14px", borderRadius: 10, border: `1px solid ${C.border}`, fontSize: 14, width: "100%", fontFamily: "inherit", background: C.surface2, color: C.text, boxSizing: "border-box" } as const,
+  grid2: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 } as const,
+  grid3: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 } as const,
+  btnPink: { height: 44, borderRadius: 999, border: "none", background: C.pink, color: "#fff", fontWeight: 800, cursor: "pointer", padding: "0 28px", fontSize: 14, fontFamily: "inherit" } as const,
+  btnOutline: { height: 34, borderRadius: 8, border: `1px solid ${C.border}`, background: "transparent", color: C.text, fontWeight: 600, cursor: "pointer", padding: "0 14px", fontSize: 12, fontFamily: "inherit" } as const,
+  table: { width: "100%", borderCollapse: "collapse" as const, fontSize: 13 } as const,
+  th: { textAlign: "left" as const, padding: "8px 12px", fontWeight: 700, borderBottom: `1px solid ${C.border}`, color: C.muted, fontSize: 11, textTransform: "uppercase" as const, letterSpacing: "0.06em" } as const,
+  td: { padding: "10px 12px", borderBottom: `1px solid ${C.border}`, verticalAlign: "middle" as const, color: C.text } as const,
+  badge: (color: "green" | "red" | "grey") => ({
+    display: "inline-block", padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700,
+    background: color === "green" ? "#14532d" : color === "red" ? "#7f1d1d" : C.surface2,
+    color: color === "green" ? "#4ade80" : color === "red" ? "#f87171" : C.muted,
+  }) as const,
+  toggleRow: { display: "flex", flexWrap: "wrap" as const, gap: 8 } as const,
+  toggleBtn: (on: boolean) => ({
+    padding: "8px 16px", borderRadius: 8, border: `1px solid ${on ? C.pink : C.border}`,
+    background: on ? C.pink : C.surface2, color: on ? "#fff" : C.muted,
+    fontWeight: 600, fontSize: 13, cursor: "pointer", fontFamily: "inherit",
+  }) as const,
+  uploadBox: { border: `2px dashed ${C.border}`, borderRadius: 12, padding: 16, textAlign: "center" as const, cursor: "pointer", color: C.muted, fontSize: 13, background: C.surface2 } as const,
+  previewGrid: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 } as const,
+};
+
+// ── CROP MODAL ───────────────────────────────────────────────
+function CropModal({ file, round, onDone, onCancel }: {
+  file: File; round: boolean;
+  onDone: (blob: Blob) => void;
+  onCancel: () => void;
+}) {
+  const SIZE = 380;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [scale, setScale] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const dragging = useRef(false);
+  const dragStart = useRef({ mx: 0, my: 0, ox: 0, oy: 0 });
+  const objectUrl = URL.createObjectURL(file);
+
+  function draw(sc = scale, off = offset) {
+    const canvas = canvasRef.current;
+    const img = imgRef.current;
+    if (!canvas || !img || !img.naturalWidth) return;
+    const ctx = canvas.getContext("2d")!;
+    ctx.clearRect(0, 0, SIZE, SIZE);
+    if (round) { ctx.save(); ctx.beginPath(); ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2); ctx.clip(); }
+    const w = img.naturalWidth * sc;
+    const h = img.naturalHeight * sc;
+    ctx.drawImage(img, SIZE / 2 - w / 2 + off.x, SIZE / 2 - h / 2 + off.y, w, h);
+    if (round) ctx.restore();
+  }
+
+  function save() {
+    const canvas = canvasRef.current!;
+    draw();
+    canvas.toBlob(b => { if (b) onDone(b); }, "image/jpeg", 0.92);
+  }
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ background: C.surface, borderRadius: 20, padding: 24, display: "flex", flexDirection: "column", gap: 16, alignItems: "center", border: `1px solid ${C.border}` }}>
+        <div style={{ fontWeight: 800, color: C.text }}>Adjust photo</div>
+        <div
+          style={{ width: SIZE, height: SIZE, overflow: "hidden", borderRadius: round ? "50%" : 12, border: `2px solid ${C.border}`, cursor: "grab", position: "relative", background: "#000" }}
+          onMouseDown={e => { dragging.current = true; dragStart.current = { mx: e.clientX, my: e.clientY, ox: offset.x, oy: offset.y }; }}
+          onMouseMove={e => {
+            if (!dragging.current) return;
+            const off = { x: dragStart.current.ox + e.clientX - dragStart.current.mx, y: dragStart.current.oy + e.clientY - dragStart.current.my };
+            setOffset(off); draw(scale, off);
+          }}
+          onMouseUp={() => { dragging.current = false; }}
+          onMouseLeave={() => { dragging.current = false; }}
+        >
+          <img ref={imgRef} src={objectUrl} alt="" onLoad={() => draw()}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", opacity: 0, pointerEvents: "none" }} />
+          <canvas ref={canvasRef} width={SIZE} height={SIZE} style={{ display: "block" }} />
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
+          <span style={{ color: C.muted, fontSize: 12 }}>Zoom</span>
+          <input type="range" min={0.5} max={3} step={0.01} value={scale}
+            onChange={e => { const sc = Number(e.target.value); setScale(sc); draw(sc, offset); }} style={{ flex: 1 }} />
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button style={S.btnOutline} onClick={onCancel}>Cancel</button>
+          <button style={S.btnPink} onClick={save}>Apply</button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-async function uploadFile(file: File, path: string): Promise<string> {
-  const sb = supabase();
-  const { error } = await sb.storage.from("products").upload(path, file, { upsert: true });
+// ── HELPERS ──────────────────────────────────────────────────
+function slugify(t: string) {
+  return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function pickFile(accept: string, multiple: boolean, cb: (files: File[]) => void) {
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = accept; inp.multiple = multiple;
+  inp.onchange = () => { const f = Array.from(inp.files ?? []); if (f.length) cb(f); };
+  inp.click();
+}
+
+async function uploadBlob(blob: Blob, path: string) {
+  const { error } = await sb().storage.from("products").upload(path, blob, { upsert: true, contentType: "image/jpeg" });
   if (error) throw error;
-  const { data } = sb.storage.from("products").getPublicUrl(path);
-  return data.publicUrl;
+  return sb().storage.from("products").getPublicUrl(path).data.publicUrl;
 }
 
+async function uploadFile(file: File, path: string) {
+  const { error } = await sb().storage.from("products").upload(path, file, { upsert: true });
+  if (error) throw error;
+  return sb().storage.from("products").getPublicUrl(path).data.publicUrl;
+}
+
+// ── COMPONENT ────────────────────────────────────────────────
 export default function AdminClient({
-  products: initialProducts,
+  products: init,
   orders,
   commissions,
-  heroVideos: initialHeroVideos,
+  heroVideos: initHero,
 }: {
   products: Product[];
   orders: Order[];
@@ -109,356 +220,375 @@ export default function AdminClient({
   supabaseAnonKey: string;
 }) {
   const [tab, setTab] = useState<"products" | "new" | "orders" | "affiliates" | "hero">("products");
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [products, setProducts] = useState(init);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
-  // New product form state
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tagsInput, setTagsInput] = useState("");
-  const [coverFile, setCoverFile] = useState<File | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  // form
+  const [titleBase, setTitleBase] = useState<TitleBase | "">("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [availableTags, setAvailableTags] = useState(DEFAULT_TAGS);
+  const [newTagInput, setNewTagInput] = useState("");
+  const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
+  const [coverPrev, setCoverPrev] = useState("");
+  const [avatarBlob, setAvatarBlob] = useState<Blob | null>(null);
+  const [avatarPrev, setAvatarPrev] = useState("");
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPrevs, setGalleryPrevs] = useState<string[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [priceBasic, setPriceBasic] = useState(54900);
-  const [pricePro, setPricePro] = useState(64900);
-  const [pricePremium, setPricePremium] = useState(79900);
+  const [cropFile, setCropFile] = useState<File | null>(null);
+  const [cropRound, setCropRound] = useState(false);
+  const [cropTarget, setCropTarget] = useState<"cover" | "avatar">("cover");
 
-  // Hero videos
-  const [heroVideos, setHeroVideos] = useState<HeroVideo[]>(initialHeroVideos);
+  const [heroVideos, setHeroVideos] = useState<HeroVideo[]>(
+    initHero.length >= 4 ? initHero : [{ url: "" }, { url: "" }, { url: "" }, { url: "" }]
+  );
 
-  const coverRef = useRef<HTMLInputElement>(null);
-  const avatarRef = useRef<HTMLInputElement>(null);
-  const galleryRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLInputElement>(null);
-
-  // Revenue stats
-  const totalRevenue = orders.filter(o => o.status === "paid").reduce((sum, o) => sum + o.amount_cents, 0);
+  const totalRevenue = orders.filter(o => o.status === "paid").reduce((s, o) => s + o.amount_cents, 0);
   const totalOrders = orders.filter(o => o.status === "paid").length;
-  const totalCommissions = commissions.reduce((sum, c) => sum + c.amount_cents, 0);
+  const totalComm = commissions.reduce((s, c) => s + c.amount_cents, 0);
 
-  async function handleCreateProduct() {
-    if (!title.trim()) { setMsg("Título obrigatório"); return; }
-    setLoading(true);
-    setMsg("");
+  function getNextTitle(base: TitleBase) {
+    const nums = products
+      .filter(p => p.title.startsWith(base))
+      .map(p => { const m = p.title.match(/(\d+)$/); return m ? parseInt(m[1]) : 0; });
+    return `${base}${String(nums.length ? Math.max(...nums) + 1 : 1).padStart(3, "0")}`;
+  }
+
+  function toggleTag(tag: string) {
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  }
+
+  function addTag() {
+    const t = newTagInput.trim().toLowerCase();
+    if (!t || availableTags.includes(t)) return;
+    setAvailableTags(p => [...p, t]);
+    setSelectedTags(p => [...p, t]);
+    setNewTagInput("");
+  }
+
+  function onCropDone(blob: Blob) {
+    const url = URL.createObjectURL(blob);
+    if (cropTarget === "cover") { setCoverBlob(blob); setCoverPrev(url); }
+    else { setAvatarBlob(blob); setAvatarPrev(url); }
+    setCropFile(null);
+  }
+
+  async function handleCreate() {
+    if (!titleBase) { setMsg("Please select a title."); return; }
+    setLoading(true); setMsg("");
     try {
-      const slug = slugify(title);
-      const tags = tagsInput.split(",").map(t => t.trim().replace(/^#/, "")).filter(Boolean);
-
+      const title = getNextTitle(titleBase as TitleBase);
+      const slug = slugify(title) + "-" + Date.now();
       let cover_image_url = "";
       let avatar_image_url = "";
       let video_url = "";
       const gallery_urls: string[] = [];
-
-      if (coverFile) cover_image_url = await uploadFile(coverFile, `${slug}/cover-${Date.now()}`);
-      if (avatarFile) avatar_image_url = await uploadFile(avatarFile, `${slug}/avatar-${Date.now()}`);
-      if (videoFile) video_url = await uploadFile(videoFile, `${slug}/video-${Date.now()}`);
-      for (let i = 0; i < galleryFiles.length && i < 4; i++) {
-        const url = await uploadFile(galleryFiles[i], `${slug}/gallery-${i}-${Date.now()}`);
-        gallery_urls.push(url);
+      if (coverBlob) cover_image_url = await uploadBlob(coverBlob, `${slug}/cover`);
+      if (avatarBlob) avatar_image_url = await uploadBlob(avatarBlob, `${slug}/avatar`);
+      if (videoFile) video_url = await uploadFile(videoFile, `${slug}/video`);
+      for (let i = 0; i < galleryFiles.length; i++) {
+        gallery_urls.push(await uploadFile(galleryFiles[i], `${slug}/gallery-${i}`));
       }
-
-      const { data, error } = await supabase().from("products").insert({
-        title: title.trim(),
-        slug,
-        description: description.trim(),
-        tags,
-        cover_image_url,
-        avatar_image_url,
-        gallery_urls,
-        video_url,
-        price_basic: priceBasic,
-        price_pro: pricePro,
-        price_premium: pricePremium,
-        currency: "usd",
-        active: true,
-        sold: false,
+      const { data, error } = await sb().from("products").insert({
+        title, slug, tags: selectedTags,
+        cover_image_url, avatar_image_url, gallery_urls, video_url,
+        price_basic: PLAN_PRICES.basic * 100,
+        price_pro: PLAN_PRICES.pro * 100,
+        price_premium: PLAN_PRICES.premium * 100,
+        currency: "usd", active: true, sold: false,
       }).select().single();
-
       if (error) throw error;
-      setProducts(prev => [data, ...prev]);
-      setTitle(""); setDescription(""); setTagsInput("");
-      setCoverFile(null); setAvatarFile(null); setGalleryFiles([]); setVideoFile(null);
-      setMsg("✅ Produto criado com sucesso!");
+      setProducts(p => [data as Product, ...p]);
+      setTitleBase(""); setSelectedTags([]);
+      setCoverBlob(null); setCoverPrev(""); setAvatarBlob(null); setAvatarPrev("");
+      setGalleryFiles([]); setGalleryPrevs([]); setVideoFile(null);
+      setMsg("✅ Product created!");
       setTab("products");
     } catch (e: unknown) {
-      setMsg("❌ Erro: " + (e instanceof Error ? e.message : String(e)));
+      setMsg("❌ " + (e instanceof Error ? e.message : String(e)));
     }
     setLoading(false);
   }
 
-  async function toggleActive(product: Product) {
-    await supabase().from("products").update({ active: !product.active }).eq("id", product.id);
-    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, active: !p.active } : p));
+  async function toggleActive(p: Product) {
+    await sb().from("products").update({ active: !p.active }).eq("id", p.id);
+    setProducts(prev => prev.map(x => x.id === p.id ? { ...x, active: !x.active } : x));
   }
 
   async function deleteProduct(id: string) {
-    if (!confirm("Apagar produto?")) return;
-    await supabase().from("products").delete().eq("id", id);
+    if (!confirm("Delete this product?")) return;
+    await sb().from("products").delete().eq("id", id);
     setProducts(prev => prev.filter(p => p.id !== id));
   }
 
-  async function saveHeroVideos() {
+  async function saveHero() {
     setLoading(true);
-    await supabase().from("site_settings").upsert({ key: "hero_videos", value: { videos: heroVideos } });
+    await sb().from("site_settings").upsert({ key: "hero_videos", value: { videos: heroVideos } });
     setLoading(false);
-    setMsg("✅ Hero videos salvos!");
-  }
-
-  async function uploadHeroVideo(index: number, file: File) {
-    const url = await uploadFile(file, `hero/video-${index}-${Date.now()}`);
-    setHeroVideos(prev => prev.map((v, i) => i === index ? { ...v, url } : v));
+    setMsg("✅ Saved!");
   }
 
   return (
-    <div style={s.page}>
-      {/* Navbar */}
-      <nav style={s.nav}>
-        <span style={s.navTitle}>The Pixel Dream · Admin</span>
+    <div style={S.page}>
+      {cropFile && (
+        <CropModal file={cropFile} round={cropRound}
+          onDone={onCropDone}
+          onCancel={() => setCropFile(null)} />
+      )}
+
+      <nav style={S.nav}>
+        <span style={{ fontWeight: 800, fontSize: 16, color: C.text }}>The Pixel Dream · Admin</span>
         <form action="/auth/logout" method="post">
-          <button type="submit" style={s.btnOutline}>Sair</button>
+          <button type="submit" style={S.btnOutline}>Sign out</button>
         </form>
       </nav>
 
-      {/* Stats bar */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #e8e8ed", padding: "12px 24px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", gap: 32 }}>
+      <div style={S.statsBar}>
+        <div style={S.statsInner}>
           {[
-            { label: "Receita total", value: `$${(totalRevenue / 100).toFixed(0)}` },
-            { label: "Vendas pagas", value: totalOrders },
-            { label: "Produtos ativos", value: products.filter(p => p.active && !p.sold).length },
-            { label: "Comissões geradas", value: `$${(totalCommissions / 100).toFixed(0)}` },
-          ].map(stat => (
-            <div key={stat.label}>
-              <div style={{ fontSize: 11, color: "#6e6e78", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>{stat.label}</div>
-              <div style={{ fontSize: 22, fontWeight: 900, color: "#111" }}>{stat.value}</div>
+            { label: "Total Revenue", val: `$${(totalRevenue / 100).toFixed(0)}` },
+            { label: "Paid Orders", val: totalOrders },
+            { label: "Active Products", val: products.filter(p => p.active && !p.sold).length },
+            { label: "Commissions", val: `$${(totalComm / 100).toFixed(0)}` },
+          ].map(st => (
+            <div key={st.label}>
+              <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>{st.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: C.text }}>{st.val}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Tabs */}
-      <div style={s.tabs}>
+      <div style={S.tabs}>
         {(["products", "new", "orders", "affiliates", "hero"] as const).map(t => (
-          <button key={t} style={s.tab(tab === t)} onClick={() => setTab(t)}>
-            {{ products: "Produtos", new: "+ Novo produto", orders: "Vendas", affiliates: "Afiliados", hero: "Hero videos" }[t]}
+          <button key={t} style={S.tab(tab === t)} onClick={() => setTab(t)}>
+            {{ products: "Products", new: "+ New", orders: "Sales", affiliates: "Affiliates", hero: "Hero Videos" }[t]}
           </button>
         ))}
       </div>
 
-      <div style={s.content}>
-        {msg && <div style={{ padding: "12px 16px", borderRadius: 10, background: msg.startsWith("✅") ? "#dcfce7" : "#fee2e2", marginBottom: 16, fontWeight: 600, fontSize: 14 }}>{msg}</div>}
+      <div style={S.content}>
+        {msg && (
+          <div style={{ padding: "12px 16px", borderRadius: 10, marginBottom: 16, fontWeight: 600, fontSize: 14, background: msg.startsWith("✅") ? "#14532d" : "#7f1d1d", color: msg.startsWith("✅") ? "#4ade80" : "#f87171" }}>
+            {msg}
+          </div>
+        )}
 
-        {/* ── PRODUCTS LIST ── */}
+        {/* PRODUCTS */}
         {tab === "products" && (
-          <div style={s.card}>
-            <div style={s.sectionTitle}>Produtos ({products.length})</div>
-            {products.length === 0 && <p style={{ color: "#6e6e78" }}>Nenhum produto ainda. Crie um!</p>}
-            <div style={{ display: "grid", gap: 12 }}>
-              {products.map(p => (
-                <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 16, padding: 12, border: "1px solid #e8e8ed", borderRadius: 12 }}>
-                  {p.cover_image_url && <img src={p.cover_image_url} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover" }} />}
-                  {!p.cover_image_url && <div style={{ width: 56, height: 56, borderRadius: 8, background: "#f0f0f5" }} />}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 800, fontSize: 15 }}>{p.title}</div>
-                    <div style={{ fontSize: 12, color: "#6e6e78", marginTop: 2 }}>
-                      Basic ${(p.price_basic / 100)} · Pro ${(p.price_pro / 100)} · Premium ${(p.price_premium / 100)}
+          <div style={S.card}>
+            <div style={S.sectionTitle}>Products ({products.length})</div>
+            {!products.length && <p style={{ color: C.muted }}>No products yet.</p>}
+            <div style={{ display: "grid", gap: 10 }}>
+              {products.map(p => {
+                const thumb = p.gallery_urls?.[0] || p.cover_image_url;
+                return (
+                  <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: 12, border: `1px solid ${C.border}`, borderRadius: 12, background: C.surface2 }}>
+                    {thumb
+                      ? <img src={thumb} alt="" style={{ width: 52, height: 52, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+                      : <div style={{ width: 52, height: 52, borderRadius: 8, background: C.surface, flexShrink: 0 }} />
+                    }
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 800, color: C.text }}>{p.title}</div>
+                      <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
+                        Basic ${p.price_basic / 100} · Pro ${p.price_pro / 100} · Premium ${p.price_premium / 100}
+                      </div>
+                      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginTop: 4 }}>
+                        {(p.tags ?? []).map(t => <span key={t} style={{ fontSize: 11, color: C.muted, background: C.surface, borderRadius: 4, padding: "2px 6px" }}>#{t}</span>)}
+                      </div>
                     </div>
-                    <div style={s.tagsRow}>
-                      {(p.tags ?? []).map(t => <span key={t} style={s.tag}>#{t}</span>)}
+                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
+                      {p.sold && <span style={S.badge("red")}>SOLD</span>}
+                      {!p.sold && <span style={S.badge(p.active ? "green" : "grey")}>{p.active ? "ACTIVE" : "INACTIVE"}</span>}
+                      <button style={S.btnOutline} onClick={() => toggleActive(p)}>{p.active ? "Deactivate" : "Activate"}</button>
+                      <a href={`/product/${p.id}`} target="_blank" rel="noopener noreferrer"
+                        style={{ ...S.btnOutline, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>
+                        View →
+                      </a>
+                      <button style={{ ...S.btnOutline, color: C.red, borderColor: "#7f1d1d" }} onClick={() => deleteProduct(p.id)}>Delete</button>
                     </div>
                   </div>
-                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
-                    {p.sold && <span style={s.badge("red")}>VENDIDO</span>}
-                    {!p.sold && <span style={s.badge(p.active ? "green" : "grey")}>{p.active ? "ATIVO" : "INATIVO"}</span>}
-                    <button style={s.btnOutline} onClick={() => toggleActive(p)}>{p.active ? "Desativar" : "Ativar"}</button>
-                    <a href={`/product/${p.id}`} style={{ ...s.btnOutline, display: "inline-flex", alignItems: "center" }}>Ver →</a>
-                    <button style={{ ...s.btnOutline, color: "#dc2626", borderColor: "#fca5a5" }} onClick={() => deleteProduct(p.id)}>Apagar</button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* ── NEW PRODUCT ── */}
+        {/* NEW PRODUCT */}
         {tab === "new" && (
-          <div style={s.card}>
-            <div style={s.sectionTitle}>Novo produto</div>
-            <div style={s.grid2}>
-              <label style={s.label}>
-                <span style={s.labelText}>Título *</span>
-                <input style={s.input} value={title} onChange={e => setTitle(e.target.value)} placeholder="LATINA002" />
-              </label>
-              <label style={s.label}>
-                <span style={s.labelText}>Tags (separadas por vírgula)</span>
-                <input style={s.input} value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="latina, teen, girlnextdoor" />
-              </label>
+          <div style={S.card}>
+            <div style={S.sectionTitle}>New Product</div>
+
+            {/* Title */}
+            <div style={S.label}>
+              <span style={S.labelText}>Title</span>
+              <div style={S.toggleRow}>
+                {TITLE_OPTIONS.map(opt => (
+                  <button key={opt} style={S.toggleBtn(titleBase === opt)} onClick={() => setTitleBase(opt)}>{opt}</button>
+                ))}
+              </div>
+              {titleBase && (
+                <div style={{ marginTop: 8, fontSize: 13, color: C.muted }}>
+                  Will be named: <strong style={{ color: C.text }}>{getNextTitle(titleBase as TitleBase)}</strong>
+                </div>
+              )}
             </div>
 
-            <label style={s.label}>
-              <span style={s.labelText}>Descrição</span>
-              <textarea style={s.textarea} rows={3} value={description} onChange={e => setDescription(e.target.value)} />
-            </label>
-
-            <div style={s.grid3}>
-              <label style={s.label}>
-                <span style={s.labelText}>Preço Basic (centavos)</span>
-                <input style={s.input} type="number" value={priceBasic} onChange={e => setPriceBasic(Number(e.target.value))} />
-                <span style={{ fontSize: 11, color: "#6e6e78" }}>${(priceBasic / 100).toFixed(2)}</span>
-              </label>
-              <label style={s.label}>
-                <span style={s.labelText}>Preço Pro (centavos)</span>
-                <input style={s.input} type="number" value={pricePro} onChange={e => setPricePro(Number(e.target.value))} />
-                <span style={{ fontSize: 11, color: "#6e6e78" }}>${(pricePro / 100).toFixed(2)}</span>
-              </label>
-              <label style={s.label}>
-                <span style={s.labelText}>Preço Premium (centavos)</span>
-                <input style={s.input} type="number" value={pricePremium} onChange={e => setPricePremium(Number(e.target.value))} />
-                <span style={{ fontSize: 11, color: "#6e6e78" }}>${(pricePremium / 100).toFixed(2)}</span>
-              </label>
+            {/* Tags */}
+            <div style={S.label}>
+              <span style={S.labelText}>Tags</span>
+              <div style={S.toggleRow}>
+                {availableTags.map(tag => (
+                  <button key={tag} style={S.toggleBtn(selectedTags.includes(tag))} onClick={() => toggleTag(tag)}>{tag}</button>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <input style={{ ...S.input, flex: 1 }} placeholder="Add new tag..." value={newTagInput}
+                  onChange={e => setNewTagInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addTag()} />
+                <button style={S.btnPink} onClick={addTag}>Add tag</button>
+              </div>
             </div>
 
-            <div style={s.grid2}>
-              {/* Cover image */}
-              <label style={s.label}>
-                <span style={s.labelText}>Foto cover (banner)</span>
-                <div style={s.uploadArea} onClick={() => coverRef.current?.click()}>
-                  {coverFile ? coverFile.name : "Clique para selecionar"}
+            {/* Cover + Avatar */}
+            <div style={S.grid2}>
+              <div style={S.label}>
+                <span style={S.labelText}>Cover photo (banner)</span>
+                <div style={S.uploadBox} onClick={() => pickFile("image/*", false, ([f]) => { setCropFile(f); setCropRound(false); setCropTarget("cover"); })}>
+                  {coverPrev
+                    ? <img src={coverPrev} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 8 }} alt="" />
+                    : <span>Click to select</span>}
                 </div>
-                <input ref={coverRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => setCoverFile(e.target.files?.[0] ?? null)} />
-                {coverFile && <img src={URL.createObjectURL(coverFile)} style={{ ...s.preview, width: "100%", height: 120, marginTop: 8 }} />}
-              </label>
-
-              {/* Avatar */}
-              <label style={s.label}>
-                <span style={s.labelText}>Foto avatar (círculo)</span>
-                <div style={s.uploadArea} onClick={() => avatarRef.current?.click()}>
-                  {avatarFile ? avatarFile.name : "Clique para selecionar"}
+              </div>
+              <div style={S.label}>
+                <span style={S.labelText}>Avatar photo (circle)</span>
+                <div style={S.uploadBox} onClick={() => pickFile("image/*", false, ([f]) => { setCropFile(f); setCropRound(true); setCropTarget("avatar"); })}>
+                  {avatarPrev
+                    ? <img src={avatarPrev} style={{ width: 96, height: 96, objectFit: "cover", borderRadius: "50%", margin: "0 auto" }} alt="" />
+                    : <span>Click to select</span>}
                 </div>
-                <input ref={avatarRef} type="file" accept="image/*" style={{ display: "none" }} onChange={e => setAvatarFile(e.target.files?.[0] ?? null)} />
-                {avatarFile && <img src={URL.createObjectURL(avatarFile)} style={{ ...s.preview, borderRadius: "50%", marginTop: 8 }} />}
-              </label>
+              </div>
             </div>
 
             {/* Gallery */}
-            <label style={s.label}>
-              <span style={s.labelText}>Galeria (até 4 fotos)</span>
-              <div style={s.uploadArea} onClick={() => galleryRef.current?.click()}>
-                {galleryFiles.length ? `${galleryFiles.length} foto(s) selecionada(s)` : "Clique para selecionar até 4 fotos"}
+            <div style={S.label}>
+              <span style={S.labelText}>Gallery (up to 4 photos)</span>
+              <div style={S.uploadBox} onClick={() => pickFile("image/*", true, files => {
+                const sel = files.slice(0, 4);
+                setGalleryFiles(sel);
+                setGalleryPrevs(sel.map(f => URL.createObjectURL(f)));
+              })}>
+                {galleryPrevs.length
+                  ? <div style={S.previewGrid}>
+                      {galleryPrevs.map((u, i) => <img key={i} src={u} style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover", borderRadius: 8 }} alt="" />)}
+                    </div>
+                  : <span>Click to select up to 4 photos</span>
+                }
               </div>
-              <input ref={galleryRef} type="file" accept="image/*" multiple style={{ display: "none" }}
-                onChange={e => setGalleryFiles(Array.from(e.target.files ?? []).slice(0, 4))} />
-              <div style={s.previewRow}>
-                {galleryFiles.map((f, i) => <img key={i} src={URL.createObjectURL(f)} style={s.preview} />)}
-              </div>
-            </label>
+            </div>
 
             {/* Video */}
-            <label style={s.label}>
-              <span style={s.labelText}>Vídeo (mp4)</span>
-              <div style={s.uploadArea} onClick={() => videoRef.current?.click()}>
-                {videoFile ? videoFile.name : "Clique para selecionar o vídeo"}
+            <div style={S.label}>
+              <span style={S.labelText}>Video (mp4)</span>
+              <div style={S.uploadBox} onClick={() => pickFile("video/*", false, ([f]) => setVideoFile(f))}>
+                {videoFile
+                  ? <video src={URL.createObjectURL(videoFile)} style={{ width: "100%", borderRadius: 8, maxHeight: 200 }} controls muted />
+                  : <span>Click to select video</span>
+                }
               </div>
-              <input ref={videoRef} type="file" accept="video/*" style={{ display: "none" }} onChange={e => setVideoFile(e.target.files?.[0] ?? null)} />
-            </label>
+            </div>
 
-            <button style={s.btnPink} onClick={handleCreateProduct} disabled={loading}>
-              {loading ? "Salvando..." : "Criar produto"}
-            </button>
+            {/* Plan prices display */}
+            <div style={S.grid3}>
+              {(["basic", "pro", "premium"] as const).map(plan => (
+                <div key={plan} style={{ background: C.surface2, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 16px" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>{plan}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: C.text }}>${PLAN_PRICES[plan]}</div>
+                  <div style={{ fontSize: 11, color: C.muted }}>one-time</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 24 }}>
+              <button style={S.btnPink} onClick={handleCreate} disabled={loading}>
+                {loading ? "Saving..." : "Create product"}
+              </button>
+            </div>
           </div>
         )}
 
-        {/* ── ORDERS ── */}
+        {/* SALES */}
         {tab === "orders" && (
-          <div style={s.card}>
-            <div style={s.sectionTitle}>Vendas</div>
-            <table style={s.table}>
-              <thead>
-                <tr>
-                  {["Produto", "Plano", "Valor", "Status", "Método", "Afiliado", "Data"].map(h => (
-                    <th key={h} style={s.th}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
+          <div style={S.card}>
+            <div style={S.sectionTitle}>Sales</div>
+            <table style={S.table}>
+              <thead><tr>{["Product", "Plan", "Amount", "Status", "Method", "Affiliate", "Date"].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead>
               <tbody>
                 {orders.map(o => (
                   <tr key={o.id}>
-                    <td style={s.td}>{o.products?.title ?? "-"}</td>
-                    <td style={s.td}>{o.plan?.toUpperCase()}</td>
-                    <td style={s.td}>${(o.amount_cents / 100).toFixed(2)}</td>
-                    <td style={s.td}><span style={s.badge(o.status === "paid" ? "green" : "red")}>{o.status}</span></td>
-                    <td style={s.td}>{o.payment_method ?? "-"}</td>
-                    <td style={s.td}>{o.affiliate_code ?? "-"}</td>
-                    <td style={s.td}>{new Date(o.created_at).toLocaleDateString("pt-BR")}</td>
+                    <td style={S.td}>{o.products?.title ?? "-"}</td>
+                    <td style={S.td}>{o.plan?.toUpperCase()}</td>
+                    <td style={S.td}>${(o.amount_cents / 100).toFixed(2)}</td>
+                    <td style={S.td}><span style={S.badge(o.status === "paid" ? "green" : "red")}>{o.status}</span></td>
+                    <td style={S.td}>{o.payment_method ?? "-"}</td>
+                    <td style={S.td}>{o.affiliate_code ?? "-"}</td>
+                    <td style={S.td}>{new Date(o.created_at).toLocaleDateString("en-US")}</td>
                   </tr>
                 ))}
-                {orders.length === 0 && <tr><td colSpan={7} style={{ ...s.td, color: "#6e6e78" }}>Nenhuma venda ainda.</td></tr>}
+                {!orders.length && <tr><td colSpan={7} style={{ ...S.td, color: C.muted }}>No sales yet.</td></tr>}
               </tbody>
             </table>
           </div>
         )}
 
-        {/* ── AFFILIATES ── */}
+        {/* AFFILIATES */}
         {tab === "affiliates" && (
-          <div style={s.card}>
-            <div style={s.sectionTitle}>Comissões de afiliados</div>
-            <table style={s.table}>
-              <thead>
-                <tr>
-                  {["Afiliado", "Comissão", "Taxa", "Status", "Data"].map(h => (
-                    <th key={h} style={s.th}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
+          <div style={S.card}>
+            <div style={S.sectionTitle}>Affiliate Commissions</div>
+            <table style={S.table}>
+              <thead><tr>{["Affiliate", "Commission", "Rate", "Status", "Date"].map(h => <th key={h} style={S.th}>{h}</th>)}</tr></thead>
               <tbody>
                 {commissions.map(c => (
                   <tr key={c.id}>
-                    <td style={s.td}>{c.profiles?.email ?? "-"}</td>
-                    <td style={s.td}>${(c.amount_cents / 100).toFixed(2)}</td>
-                    <td style={s.td}>{(Number(c.rate) * 100).toFixed(0)}%</td>
-                    <td style={s.td}><span style={s.badge(c.status === "paid" ? "green" : "grey")}>{c.status}</span></td>
-                    <td style={s.td}>{new Date(c.created_at).toLocaleDateString("pt-BR")}</td>
+                    <td style={S.td}>{c.profiles?.email ?? "-"}</td>
+                    <td style={S.td}>${(c.amount_cents / 100).toFixed(2)}</td>
+                    <td style={S.td}>{(Number(c.rate) * 100).toFixed(0)}%</td>
+                    <td style={S.td}><span style={S.badge(c.status === "paid" ? "green" : "grey")}>{c.status}</span></td>
+                    <td style={S.td}>{new Date(c.created_at).toLocaleDateString("en-US")}</td>
                   </tr>
                 ))}
-                {commissions.length === 0 && <tr><td colSpan={5} style={{ ...s.td, color: "#6e6e78" }}>Nenhuma comissão ainda.</td></tr>}
+                {!commissions.length && <tr><td colSpan={5} style={{ ...S.td, color: C.muted }}>No commissions yet.</td></tr>}
               </tbody>
             </table>
           </div>
         )}
 
-        {/* ── HERO VIDEOS ── */}
+        {/* HERO VIDEOS */}
         {tab === "hero" && (
-          <div style={s.card}>
-            <div style={s.sectionTitle}>Hero videos da página inicial</div>
-            <p style={{ color: "#6e6e78", fontSize: 14, marginBottom: 20 }}>
-              Configure os 4 vídeos que aparecem no carousel da landing page.
-            </p>
+          <div style={S.card}>
+            <div style={S.sectionTitle}>Hero Videos</div>
+            <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Configure the 4 videos in the landing page carousel.</p>
             {heroVideos.map((v, i) => (
-              <div key={i} style={{ marginBottom: 20, padding: 16, border: "1px solid #e8e8ed", borderRadius: 12 }}>
-                <div style={{ fontWeight: 700, marginBottom: 10 }}>Vídeo {i + 1}</div>
-                <label style={s.label}>
-                  <span style={s.labelText}>URL do vídeo (mp4)</span>
-                  <input style={s.input} value={v.url} onChange={e => setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { ...hv, url: e.target.value } : hv))} placeholder="https://..." />
-                </label>
-                <label style={s.label}>
-                  <span style={s.labelText}>Poster (imagem de preview)</span>
-                  <input style={s.input} value={v.poster} onChange={e => setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { ...hv, poster: e.target.value } : hv))} placeholder="https://..." />
-                </label>
-                <div style={s.uploadArea} onClick={() => {
-                  const inp = document.createElement("input");
-                  inp.type = "file"; inp.accept = "video/*";
-                  inp.onchange = (e) => { const f = (e.target as HTMLInputElement).files?.[0]; if (f) uploadHeroVideo(i, f); };
-                  inp.click();
-                }}>
-                  Ou clique para fazer upload do vídeo
+              <div key={i} style={{ marginBottom: 16, padding: 16, border: `1px solid ${C.border}`, borderRadius: 12, background: C.surface2 }}>
+                <div style={{ fontWeight: 700, color: C.text, marginBottom: 10 }}>Video {i + 1}</div>
+                <div style={S.uploadBox} onClick={() => pickFile("video/*", false, ([f]) => {
+                  uploadFile(f, `hero/video-${i}-${Date.now()}`).then(url => {
+                    setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { url } : hv));
+                  });
+                })}>
+                  {v.url
+                    ? <video src={v.url} style={{ width: "100%", borderRadius: 8, maxHeight: 160 }} controls muted />
+                    : <span>Click to upload video</span>
+                  }
                 </div>
-                {v.url && <video src={v.url} style={{ width: "100%", borderRadius: 8, marginTop: 8 }} controls muted />}
+                <input style={{ ...S.input, marginTop: 8 }} value={v.url}
+                  onChange={e => setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { url: e.target.value } : hv))}
+                  placeholder="Or paste video URL..." />
               </div>
             ))}
-            <button style={s.btnPink} onClick={saveHeroVideos} disabled={loading}>
-              {loading ? "Salvando..." : "Salvar hero videos"}
+            <button style={S.btnPink} onClick={saveHero} disabled={loading}>
+              {loading ? "Saving..." : "Save hero videos"}
             </button>
           </div>
         )}
