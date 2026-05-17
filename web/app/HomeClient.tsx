@@ -128,47 +128,65 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   };
 }, []);
 
-  useEffect(() => {
-    function tryPlayVideo(video: HTMLVideoElement) {
-      if (!video) return;
-      video.muted = true;
-      video.defaultMuted = true;
-      video.setAttribute("muted", "");
-      const p = video.play();
-      if (p !== undefined) p.catch(() => {});
-    }
-
-    function bootReelVideos() {
-      document.querySelectorAll(".reel__slide video").forEach((v) => {
-        const video = v as HTMLVideoElement;
-        video.setAttribute("playsinline", "");
-        video.setAttribute("webkit-playsinline", "");
-        tryPlayVideo(video);
+useEffect(() => {
+  function tryPlayVideo(video: HTMLVideoElement) {
+    if (!video) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    
+    const p = video.play();
+    if (p !== undefined) {
+      p.catch((err) => {
+        console.log("Autoplay bloqueado temporariamente pelo navegador:", err);
       });
     }
+  }
 
+  function bootReelVideos() {
     document.querySelectorAll(".reel__slide video").forEach((v) => {
-      const video = v as HTMLVideoElement;
-      video.addEventListener("loadeddata", () => tryPlayVideo(video));
+      tryPlayVideo(v as HTMLVideoElement);
     });
+  }
 
+  // Monitora o carregamento de dados de cada vídeo individual
+  document.querySelectorAll(".reel__slide video").forEach((v) => {
+    const video = v as HTMLVideoElement;
+    video.addEventListener("loadeddata", () => tryPlayVideo(video));
+  });
+
+  // Executa o boot inicial
+  bootReelVideos();
+  
+  // Gatilhos de segurança para interações do usuário
+  const handleTouch = () => bootReelVideos();
+  const handleClick = () => bootReelVideos();
+  
+  // CORREÇÃO CRÍTICA: Executa o boot quando a página volta a ficar visível
+  const handleVisibility = () => { 
+    if (!document.hidden) {
+      bootReelVideos(); 
+    }
+  };
+
+  // CORREÇÃO CRÍTICA: Escuta explicitamente quando a página é recuperada do Cache de Histórico (bfcache)
+  const handlePageShow = (e: PageTransitionEvent) => {
+    // Se e.persisted for verdadeiro, significa que a página veio do histórico (botão voltar)
     bootReelVideos();
-    
-    const handleTouch = () => bootReelVideos();
-    const handleClick = () => bootReelVideos();
-    const handleVisibility = () => { if (!document.hidden) bootReelVideos(); };
-    const handlePageShow = (e: PageTransitionEvent) => { if (e.persisted) bootReelVideos(); };
+  };
 
-    document.addEventListener("touchstart", handleTouch, { passive: true, capture: true, once: true });
-    document.addEventListener("click", handleClick, { once: true });
-    document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("pageshow", handlePageShow);
+  document.addEventListener("touchstart", handleTouch, { passive: true, capture: true, once: true });
+  document.addEventListener("click", handleClick, { once: true });
+  document.addEventListener("visibilitychange", handleVisibility);
+  window.addEventListener("pageshow", handlePageShow);
 
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("pageshow", handlePageShow);
-    };
-  }, []);
+  return () => {
+    document.removeEventListener("visibilitychange", handleVisibility);
+    window.removeEventListener("pageshow", handlePageShow);
+  };
+}, [videoUrls]); // Adicionado videoUrls como dependência para reavaliar caso a lista mude
 
   return (
     <>
