@@ -1,5 +1,3 @@
-"use client";
-
 // web/app/admin/page.tsx
 
 import { redirect } from "next/navigation";
