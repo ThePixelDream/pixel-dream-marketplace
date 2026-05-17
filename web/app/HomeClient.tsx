@@ -231,23 +231,33 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
           var marqueeStarted = false;
 
           function startMarquee() {
-            if (marqueeStarted || !reelViewport || !reelTrack || reduceMotion.matches) return;
-            marqueeStarted = true;
-            var loopMs = 32000;
-            var scrollPos = 0;
-            var last = performance.now();
-            var pausedByHover = false;
+  if (marqueeStarted || !reelViewport || !reelTrack || reduceMotion.matches) {
+    return;
+  }
 
-            if (reelSection && window.matchMedia("(hover: hover)").matches) {
-              reelSection.addEventListener("mouseenter", function () { pausedByHover = true; });
-              reelSection.addEventListener("mouseleave", function () { pausedByHover = false; });
-            }
+  marqueeStarted = true;
 
-            function tick(now) {
-  var half = reelTrack.scrollWidth / 2;
+  reelViewport.style.overflowX = "auto";
 
-  if (half > 0) {
-    if (!pausedByHover) {
+  var loopMs = 32000;
+  var scrollPos = 0;
+  var last = performance.now();
+  var pausedByHover = false;
+
+  if (reelSection && window.matchMedia("(hover: hover)").matches) {
+    reelSection.addEventListener("mouseenter", function () {
+      pausedByHover = true;
+    });
+
+    reelSection.addEventListener("mouseleave", function () {
+      pausedByHover = false;
+    });
+  }
+
+  function tick(now) {
+    var half = reelTrack.scrollWidth * 0.5;
+
+    if (half > 0 && !pausedByHover) {
       var dt = now - last;
 
       scrollPos += (half / loopMs) * dt;
@@ -256,31 +266,32 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         scrollPos -= half;
       }
 
-      reelViewport.scrollTo({
-        left: scrollPos,
-        behavior: "auto"
-      });
+      reelViewport.scrollLeft = scrollPos;
     }
+
+    last = now;
+
+    requestAnimationFrame(tick);
   }
 
-  last = now;
   requestAnimationFrame(tick);
 }
 
           function readyMarquee() {
-            if (reduceMotion.matches || !reelViewport || !reelTrack) return;
-            var tries = 0;
-            function attempt() {
-              if (marqueeStarted || reduceMotion.matches) return;
-              tries++;
-              if (reelTrack.scrollWidth > reelViewport.clientWidth + 10) {
-                startMarquee();
-              } else if (tries < 300) {
-                requestAnimationFrame(attempt);
-              }
-            }
-            attempt();
-          }
+  if (reduceMotion.matches || !reelViewport || !reelTrack) return;
+
+  function startWhenReady() {
+    var fullWidth = reelTrack.scrollWidth;
+
+    if (fullWidth > reelViewport.clientWidth + 50) {
+      startMarquee();
+    } else {
+      requestAnimationFrame(startWhenReady);
+    }
+  }
+
+  setTimeout(startWhenReady, 300);
+}
 
           if (document.readyState === "complete") { readyMarquee(); }
           else { window.addEventListener("load", readyMarquee); }
