@@ -183,38 +183,66 @@ img, video { display: block; max-width: 100%; }
 .reel {
   padding: 12px 0 44px;
   overflow: hidden;
+  width: 100%; /* Garante que a seção ocupe toda a largura */
 }
 
 .reel__viewport {
-  overflow-x: scroll;
+  overflow-x: hidden; 
   overflow-y: hidden;
+  width: 100%;
+  display: block; /* Força o container a se comportar como bloco limpo */
+}
 
-  scroll-behavior: auto;
+.reel__track {
+  display: flex;
+  flex-direction: row;
+  
+  /* CORREÇÃO 1: 'initial' ou 'nowrap' força o flexbox a NUNCA quebrar os vídeos em linhas */
+  flex-wrap: nowrap !important; 
+  
+  align-items: flex-start;
+  gap: 14px;
+  padding: 0 20px 10px;
+  
+  /* CORREÇÃO 2: Garante que a track estique infinitamente de acordo com a soma dos vídeos */
+  width: max-content !important; 
+  min-width: max-content;
 
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  animation: marqueeAnimate 32000ms linear infinite;
+  will-change: transform;
+}
 
-  touch-action: pan-x;
+.reel--paused .reel__track {
+  animation-play-state: paused;
+}
 
-  cursor: grab;
-  -webkit-overflow-scrolling: touch;
+.reel__slide {
+  /* CORREÇÃO 3: Impede o Safari mobile de "espremer" ou encolher os vídeos para caber na tela */
+  flex: 0 0 200px !important; 
+  width: 200px;
 
-  /* TEMP DEBUG: Commenting out mask-image to test if scroll works on iOS Safari */
-  /* -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 6%,
-    #000 94%,
-    transparent
-  );
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #0c0c0e;
+  aspect-ratio: 9 / 16;
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 16px 44px rgba(0,0,0,0.2);
+}
 
-  mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 6%,
-    #000 94%,
-    transparent
-  ); */
+/* Mantendo seus Media Queries originais de tamanho, apenas adicionando a trava de encolhimento */
+@media (min-width: 600px) {
+  .reel__slide {
+    flex: 0 0 240px !important;
+    width: 240px;
+  }
+}
+
+@media (min-width: 900px) {
+  .reel__slide {
+    flex: 0 0 270px !important;
+    width: 270px;
+  }
 }
 
 .reel__viewport::-webkit-scrollbar {
