@@ -311,29 +311,27 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         </section>
 
         <section className="feature-dark">
-          <div className="feature-dark__card">
-            <div className="feature-dark__visual">
-              <div className="feature-dark__stack">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=85" alt="" />
-                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&q=85" alt="" />
-                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=85" alt="" />
-              </div>
-              <img
-                className="feature-dark__hero-img"
-                src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/690be662e210dddca9d45726_The%20most%20realistic%20and%20captivating%20AI%20Actors.webp"
-                alt="AI models preview"
-              />
-            </div>
-            <h2>Ultra-realistic <em>AI models</em></h2>
-            <p className="sub">
-              The largest library of licensable AI faces and bodies — built for monetization workflows.
-            </p>
-            <a className="btn-sparkle" href="/marketplace">
-              <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png" width={22} height={22} alt="" aria-hidden="true" />
-              Browse the library
-            </a>
-          </div>
-        </section>
+  <div className="feature-dark__card">
+    
+    {/* Nova div envolvendo a sua colagem pronta */}
+    <div className="feature-collage-wrapper">
+      <img 
+        src="/assets/models-collage.jpg" 
+        alt="AI Models Collage" 
+        className="feature-collage-static" 
+      />
+    </div>
+
+    <h2>Ultra-realistic <em>AI models</em></h2>
+    <p className="sub">
+      The largest library of licensable AI faces and bodies — built for monetization workflows.
+    </p>
+    <a className="btn-sparkle" href="/marketplace">
+      <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png" width={22} height={22} alt="" aria-hidden="true" />
+      Browse the library
+    </a>
+  </div>
+</section>
       </main>
 
       <footer className="footer">
