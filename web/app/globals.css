@@ -543,3 +543,21 @@ img, video { display: block; max-width: 100%; }
 .footer__bottom .copy { margin-bottom: 12px; font-weight: 600; color: #44444d; }
 .footer__legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; }
 .footer__legal a { font-weight: 500; color: #555560; }
+
+/* ---------- Container da Colagem Estática ---------- */
+
+.feature-collage-wrapper {
+  width: 100%;
+  margin-bottom: 26px;
+  border-radius: 18px; /* Acompanha o design arredondado dos cards do seu site */
+  overflow: hidden;    /* Corta as arestas da imagem para fazer o arredondamento perfeito */
+  background: #0a0a0d;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+}
+
+.feature-collage-static {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
