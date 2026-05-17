@@ -2,191 +2,96 @@
 
 // web/app/HomeClient.tsx
 
-import { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import { useEffect, useRef } from "react";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
+  // Duplica a lista para criar o efeito infinito visual perfeito
   const allVideos = [...videoUrls, ...videoUrls];
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
+  // EFFECT 1: Gerenciamento do Estado de Pause ao passar o mouse (Opcional & Seguro)
   useEffect(() => {
-  // LOG FORÇADO: Se isso não aparecer no Eruda, o script rodando no celular é o antigo
-  console.log("=== UEFFECT MONTOU NO DOM ===");
-  (window as any).__marqueeStarted = "O useEffect iniciou!";
+    const reelSection = sectionRef.current;
+    if (!reelSection) return;
 
-  // Comente temporariamente a linha abaixo para testar se o seu celular está com a acessibilidade ativa
-  // const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  // if (reduceMotion.matches) return;
+    // Pausa a animação CSS quando o usuário passa o mouse (apenas desktops)
+    const handleEnter = () => {
+      reelSection.classList.add("reel--paused");
+    };
+    const handleLeave = () => {
+      reelSection.classList.remove("reel--paused");
+    };
 
-  const reelViewport = viewportRef.current;
-  const reelTrack = trackRef.current;
-  const reelSection = sectionRef.current;
-
-  if (!reelViewport || !reelTrack) return;
-
-  let animationFrameId: number;
-  let marqueeStarted = false;
-  let debugLogCount = 0;
-
-  function startMarquee() {
-    if (marqueeStarted || !reelViewport || !reelTrack) return;
-    marqueeStarted = true;
-
-    reelViewport.style.overflowX = "auto";
-
-    const loopMs = 32000;
-    let scrollPos = 0;
-    let last = performance.now();
-    let pausedByHover = false;
-
-    if (reelSection && window.matchMedia("(hover: hover)").matches) {
-      const handleEnter = () => { pausedByHover = true; };
-      const handleLeave = () => { pausedByHover = false; };
+    if (window.matchMedia("(hover: hover)").matches) {
       reelSection.addEventListener("mouseenter", handleEnter);
       reelSection.addEventListener("mouseleave", handleLeave);
     }
 
-    function tick(now: number) {
-      const half = reelTrack!.scrollWidth * 0.5;
+    return () => {
+      reelSection.removeEventListener("mouseenter", handleEnter);
+      reelSection.removeEventListener("mouseleave", handleLeave);
+    };
+  }, []);
 
-      debugLogCount++;
-      if (debugLogCount <= 20 || debugLogCount % 100 === 0) {
-        const logData = {
-          viewportWidth: reelViewport!.clientWidth,
-          trackWidth: reelTrack!.scrollWidth,
-          scrollLeft: reelViewport!.scrollLeft,
-          calculatedScrollPos: scrollPos,
-          half: half,
-          overflowX: getComputedStyle(reelViewport!).overflowX,
-          trackDisplay: getComputedStyle(reelTrack!).display,
-          trackWrap: getComputedStyle(reelTrack!).flexWrap,
-          userAgent: navigator.userAgent,
-          pausedByHover: pausedByHover,
-          dt: now - last,
-        };
-        console.log(`[MARQUEE TICK #${debugLogCount}]`, logData);
-        (window as any).__marqueeDebug = logData;
-      }
-
-      if (half > 0 && !pausedByHover) {
-        const dt = now - last;
-        scrollPos += (half / loopMs) * dt;
-
-        while (scrollPos >= half) {
-          scrollPos -= half;
-        }
-
-        reelViewport!.scrollLeft = scrollPos;
-      }
-
-      last = now;
-      animationFrameId = requestAnimationFrame(tick);
-    }
-
-    animationFrameId = requestAnimationFrame(tick);
-  }
-
-  function readyMarquee() {
-    if (!reelViewport || !reelTrack) return;
-
-    function startWhenReady() {
-      const fullWidth = reelTrack!.scrollWidth;
-      const viewportWidth = reelViewport!.clientWidth;
+  // EFFECT 2: Controle de Playback dos Vídeos (Correção de travamento ao voltar página)
+  useEffect(() => {
+    function tryPlayVideo(video: HTMLVideoElement) {
+      if (!video) return;
+      video.muted = true;
+      video.defaultMuted = true;
+      video.setAttribute("muted", "");
+      video.setAttribute("playsinline", "");
+      video.setAttribute("webkit-playsinline", "");
       
-      const logData = {
-        viewportWidth: viewportWidth,
-        trackWidth: fullWidth,
-        overflowX: getComputedStyle(reelViewport!).overflowX,
-        willStart: fullWidth > viewportWidth + 50,
-        userAgent: navigator.userAgent,
-        timestamp: performance.now(),
-      };
-      console.log(`[MARQUEE CHECK]`, logData);
-      (window as any).__marqueeCheck = logData;
-
-      if (fullWidth > viewportWidth + 50) {
-        console.log(`[MARQUEE STARTING] - Condition met: ${fullWidth} > ${viewportWidth + 50}`);
-        (window as any).__marqueeStarted = true;
-        startMarquee();
-      } else {
-        // Se os elementos ainda não renderizaram o tamanho completo na tela, tenta no próximo frame
-        animationFrameId = requestAnimationFrame(startWhenReady);
+      const p = video.play();
+      if (p !== undefined) {
+        p.catch((err) => {
+          console.log("Autoplay bloqueado temporariamente pelo navegador:", err);
+        });
       }
     }
 
-    // Mantém o pequeno delay de segurança para garantir a primeira renderização do DOM
-    setTimeout(startWhenReady, 300);
-  }
-
-  // CORREÇÃO AQUI: Executa direto sem esperar pelo window.load da página inteira
-  readyMarquee();
-
-  return () => {
-    if (animationFrameId) cancelAnimationFrame(animationFrameId);
-  };
-}, []);
-
-useEffect(() => {
-  function tryPlayVideo(video: HTMLVideoElement) {
-    if (!video) return;
-    video.muted = true;
-    video.defaultMuted = true;
-    video.setAttribute("muted", "");
-    video.setAttribute("playsinline", "");
-    video.setAttribute("webkit-playsinline", "");
-    
-    const p = video.play();
-    if (p !== undefined) {
-      p.catch((err) => {
-        console.log("Autoplay bloqueado temporariamente pelo navegador:", err);
+    function bootReelVideos() {
+      document.querySelectorAll(".reel__slide video").forEach((v) => {
+        tryPlayVideo(v as HTMLVideoElement);
       });
     }
-  }
 
-  function bootReelVideos() {
+    // Monitora o carregamento de dados de cada vídeo individual
     document.querySelectorAll(".reel__slide video").forEach((v) => {
-      tryPlayVideo(v as HTMLVideoElement);
+      const video = v as HTMLVideoElement;
+      video.addEventListener("loadeddata", () => tryPlayVideo(video));
     });
-  }
 
-  // Monitora o carregamento de dados de cada vídeo individual
-  document.querySelectorAll(".reel__slide video").forEach((v) => {
-    const video = v as HTMLVideoElement;
-    video.addEventListener("loadeddata", () => tryPlayVideo(video));
-  });
-
-  // Executa o boot inicial
-  bootReelVideos();
-  
-  // Gatilhos de segurança para interações do usuário
-  const handleTouch = () => bootReelVideos();
-  const handleClick = () => bootReelVideos();
-  
-  // CORREÇÃO CRÍTICA: Executa o boot quando a página volta a ficar visível
-  const handleVisibility = () => { 
-    if (!document.hidden) {
-      bootReelVideos(); 
-    }
-  };
-
-  // CORREÇÃO CRÍTICA: Escuta explicitamente quando a página é recuperada do Cache de Histórico (bfcache)
-  const handlePageShow = (e: PageTransitionEvent) => {
-    // Se e.persisted for verdadeiro, significa que a página veio do histórico (botão voltar)
+    // Executa o boot inicial
     bootReelVideos();
-  };
+    
+    // Gatilhos de segurança para interações manuais do usuário
+    const handleTouch = () => bootReelVideos();
+    const handleClick = () => bootReelVideos();
+    
+    // Força o play quando a aba volta a ficar ativa
+    const handleVisibility = () => { 
+      if (!document.hidden) {
+        bootReelVideos(); 
+      }
+    };
 
-  document.addEventListener("touchstart", handleTouch, { passive: true, capture: true, once: true });
-  document.addEventListener("click", handleClick, { once: true });
-  document.addEventListener("visibilitychange", handleVisibility);
-  window.addEventListener("pageshow", handlePageShow);
+    // Força o play quando o usuário clica no botão "Voltar" do navegador (bfcache)
+    const handlePageShow = (e: PageTransitionEvent) => {
+      bootReelVideos();
+    };
 
-  return () => {
-    document.removeEventListener("visibilitychange", handleVisibility);
-    window.removeEventListener("pageshow", handlePageShow);
-  };
-}, [videoUrls]); // Adicionado videoUrls como dependência para reavaliar caso a lista mude
+    document.addEventListener("touchstart", handleTouch, { passive: true, capture: true, once: true });
+    document.addEventListener("click", handleClick, { once: true });
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, [videoUrls]);
 
   return (
     <>
@@ -229,9 +134,10 @@ useEffect(() => {
             </div>
           </section>
 
+          {/* O container pai agora gerencia de forma limpa a animação via CSS */}
           <section ref={sectionRef} className="reel" aria-label="Video previews">
-            <div ref={viewportRef} className="reel__viewport" dir="ltr">
-              <div ref={trackRef} className="reel__track">
+            <div className="reel__viewport" dir="ltr">
+              <div className="reel__track">
                 {allVideos.map((src, i) => (
                   <div
                     key={i}
@@ -329,27 +235,24 @@ useEffect(() => {
         </section>
 
         <section className="feature-dark">
-  <div className="feature-dark__card">
-    
-    {/* Nova div envolvendo a sua colagem pronta */}
-    <div className="feature-collage-wrapper">
-      <img 
-        src="/assets/models-collage.jpg" 
-        alt="AI Models Collage" 
-        className="feature-collage-static" 
-      />
-    </div>
-
-    <h2>Ultra-realistic <em>AI models</em></h2>
-    <p className="sub">
-      The largest library of licensable AI faces and bodies — built for monetization workflows.
-    </p>
-    <a className="btn-sparkle" href="/marketplace">
-      <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png" width={22} height={22} alt="" aria-hidden="true" />
-      Browse the library
-    </a>
-  </div>
-</section>
+          <div className="feature-dark__card">
+            <div className="feature-collage-wrapper">
+              <img 
+                src="/assets/models-collage.jpg" 
+                alt="AI Models Collage" 
+                className="feature-collage-static" 
+              />
+            </div>
+            <h2>Ultra-realistic <em>AI models</em></h2>
+            <p className="sub">
+              The largest library of licensable AI faces and bodies — built for monetization workflows.
+            </p>
+            <a className="btn-sparkle" href="/marketplace">
+              <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png" width={22} height={22} alt="" aria-hidden="true" />
+              Browse the library
+            </a>
+          </div>
+        </section>
       </main>
 
       <footer className="footer">
