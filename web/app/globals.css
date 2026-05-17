@@ -179,121 +179,127 @@ img, video { display: block; max-width: 100%; }
 }
 
 /* ---------- Video reel — infinite auto carousel ---------- */
-.reel { padding: 12px 0 44px; }
+
+.reel {
+  padding: 12px 0 44px;
+  overflow: hidden;
+}
+
 .reel__viewport {
-  overflow-x: scroll;
+  width: 100%;
+
+  overflow-x: auto;
   overflow-y: hidden;
-  scroll-behavior: auto;
+
+  scroll-behavior: smooth;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
+
   -webkit-overflow-scrolling: touch;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
 }
-.reel__viewport::-webkit-scrollbar { display: none; }
+
+.reel__viewport::-webkit-scrollbar {
+  display: none;
+}
+
 .reel__track {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: flex-start;
+
   gap: 14px;
+
   padding: 0 20px 10px;
-  /* explicit width so Safari never wraps */
-  width: calc(20 * (200px + 14px));
+
+  width: max-content;
+  min-width: max-content;
 }
+
 .reel__slide {
-  flex-shrink: 0;
-  flex-grow: 0;
-  flex-basis: 200px;
+  flex: 0 0 200px;
+
   width: 200px;
+
   border-radius: var(--radius);
+
   overflow: hidden;
+
   background: #0c0c0e;
+
   aspect-ratio: 9 / 16;
+
   position: relative;
+
   isolation: isolate;
+
   box-shadow: 0 16px 44px rgba(0,0,0,0.2);
 }
+
 @media (min-width: 600px) {
-  .reel__slide { flex-basis: 240px; width: 240px; }
-  .reel__track { width: calc(20 * (240px + 14px)); }
+  .reel__slide {
+    flex: 0 0 240px;
+    width: 240px;
+  }
 }
+
 @media (min-width: 900px) {
-  .reel__slide { flex-basis: 270px; width: 270px; }
-  .reel__track { width: calc(20 * (270px + 14px)); }
+  .reel__slide {
+    flex: 0 0 270px;
+    width: 270px;
+  }
 }
+
 .reel__slide video {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
+  display: block;
+
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
 }
-@media (prefers-reduced-motion: reduce) {
-  .reel__slide--dup { display: none !important; }
-  .reel__track { flex-wrap: wrap; justify-content: center; max-width: 1200px; margin: 0 auto; }
-  .reel__slide { width: min(42vw, 200px); }
-}
 
-/* ---------- Dark workflow ---------- */
-.band-dark {
-  background: linear-gradient(180deg, #141418 0%, #0c0c0f 100%);
-  color: #f5f5f7;
-  padding: 56px 20px 48px;
-}
-.band-dark__inner {
-  max-width: 920px;
-  margin: 0 auto;
-  text-align: center;
-}
-.band-dark h2 {
-  font-family: "Funnel Display", sans-serif;
-  font-weight: 800;
-  font-size: clamp(1.85rem, 5vw, 2.65rem);
-  line-height: 1.12;
-  letter-spacing: -0.03em;
-  margin-bottom: 12px;
-}
-.band-dark h2 em {
-  font-family: "Fraunces", Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  display: block;
-  margin-top: 6px;
-  color: #fff;
-}
-.band-dark .lead {
-  color: rgba(245,245,247,0.55);
-  font-size: 1.05rem;
-  line-height: 1.65;
-  max-width: 560px;
-  margin: 0 auto 28px;
-}
-.btn-dark-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 52px;
-  padding: 0 22px 0 18px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, #2a2a30 0%, #1f1f24 100%);
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.9375rem;
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  font-family: inherit;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-}
-.btn-dark-pill:hover { transform: translateY(-1px); }
-.btn-dark-pill .ico {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.08);
-  display: grid;
-  place-items: center;
+@media (prefers-reduced-motion: reduce) {
+
+  .reel__slide--dup {
+    display: none !important;
+  }
+
+  .reel__track {
+    flex-wrap: wrap;
+    justify-content: center;
+
+    width: 100%;
+    min-width: 100%;
+    max-width: 1200px;
+
+    margin: 0 auto;
+  }
+
+  .reel__slide {
+    width: min(42vw, 200px);
+    flex-basis: min(42vw, 200px);
+  }
 }
 
 /* Canvas mock */
