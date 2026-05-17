@@ -13,8 +13,13 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const [erudaLoaded, setErudaLoaded] = useState(false);
 
   useEffect(() => {
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  if (reduceMotion.matches) return;
+  // LOG FORÇADO: Se isso não aparecer no Eruda, o script rodando no celular é o antigo
+  console.log("=== UEFFECT MONTOU NO DOM ===");
+  (window as any).__marqueeStarted = "O useEffect iniciou!";
+
+  // Comente temporariamente a linha abaixo para testar se o seu celular está com a acessibilidade ativa
+  // const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  // if (reduceMotion.matches) return;
 
   const reelViewport = viewportRef.current;
   const reelTrack = trackRef.current;
