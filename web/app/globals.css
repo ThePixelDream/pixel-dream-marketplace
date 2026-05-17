@@ -186,7 +186,6 @@ img, video { display: block; max-width: 100%; }
   scroll-behavior: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding: 0 0 10px;
   -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
@@ -196,12 +195,16 @@ img, video { display: block; max-width: 100%; }
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  align-items: flex-start;
   gap: 14px;
-  width: max-content;
-  min-width: 100%;
+  padding: 0 20px 10px;
+  /* explicit width so Safari never wraps */
+  width: calc(20 * (200px + 14px));
 }
 .reel__slide {
-  flex: 0 0 200px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: 200px;
   width: 200px;
   border-radius: var(--radius);
   overflow: hidden;
@@ -212,10 +215,12 @@ img, video { display: block; max-width: 100%; }
   box-shadow: 0 16px 44px rgba(0,0,0,0.2);
 }
 @media (min-width: 600px) {
-  .reel__slide { flex: 0 0 240px; width: 240px; }
+  .reel__slide { flex-basis: 240px; width: 240px; }
+  .reel__track { width: calc(20 * (240px + 14px)); }
 }
 @media (min-width: 900px) {
-  .reel__slide { flex: 0 0 270px; width: 270px; }
+  .reel__slide { flex-basis: 270px; width: 270px; }
+  .reel__track { width: calc(20 * (270px + 14px)); }
 }
 .reel__slide video {
   width: 100%;
