@@ -22,6 +22,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
 
     let animationFrameId: number;
     let marqueeStarted = false;
+    let debugLogCount = 0;
 
     function startMarquee() {
       if (marqueeStarted || !reelViewport || !reelTrack) return;
@@ -43,6 +44,25 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
 
       function tick(now: number) {
         const half = reelTrack!.scrollWidth * 0.5;
+
+        // DEBUG: Log first 20 ticks and every 100 ticks after
+        debugLogCount++;
+        if (debugLogCount <= 20 || debugLogCount % 100 === 0) {
+          console.log(`[MARQUEE TICK #${debugLogCount}]`, {
+            viewportWidth: reelViewport!.clientWidth,
+            trackWidth: reelTrack!.scrollWidth,
+            scrollLeft: reelViewport!.scrollLeft,
+            calculatedScrollPos: scrollPos,
+            half: half,
+            overflowX: getComputedStyle(reelViewport!).overflowX,
+            trackDisplay: getComputedStyle(reelTrack!).display,
+            trackWrap: getComputedStyle(reelTrack!).flexWrap,
+            trackWidthCss: getComputedStyle(reelTrack!).width,
+            userAgent: navigator.userAgent,
+            pausedByHover: pausedByHover,
+            dt: now - last,
+          });
+        }
 
         if (half > 0 && !pausedByHover) {
           const dt = now - last;
@@ -67,9 +87,26 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
 
       function startWhenReady() {
         const fullWidth = reelTrack!.scrollWidth;
-        if (fullWidth > reelViewport!.clientWidth + 50) {
+        const viewportWidth = reelViewport!.clientWidth;
+        
+        // DEBUG: Log each check
+        console.log(`[MARQUEE CHECK]`, {
+          viewportWidth: viewportWidth,
+          trackWidth: fullWidth,
+          overflowX: getComputedStyle(reelViewport!).overflowX,
+          trackDisplay: getComputedStyle(reelTrack!).display,
+          trackWrap: getComputedStyle(reelTrack!).flexWrap,
+          trackWidthCss: getComputedStyle(reelTrack!).width,
+          willStart: fullWidth > viewportWidth + 50,
+          userAgent: navigator.userAgent,
+          timestamp: performance.now(),
+        });
+
+        if (fullWidth > viewportWidth + 50) {
+          console.log(`[MARQUEE STARTING] - Condition met: ${fullWidth} > ${viewportWidth + 50}`);
           startMarquee();
         } else {
+          console.log(`[MARQUEE RETRY] - Condition NOT met yet, retrying...`);
           animationFrameId = requestAnimationFrame(startWhenReady);
         }
       }
