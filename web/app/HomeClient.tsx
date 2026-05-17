@@ -10,7 +10,6 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const [erudaLoaded, setErudaLoaded] = useState(false);
 
   useEffect(() => {
   // LOG FORÇADO: Se isso não aparecer no Eruda, o script rodando no celular é o antigo
@@ -170,28 +169,6 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
       window.removeEventListener("pageshow", handlePageShow);
     };
   }, []);
-
-  const handleDebugButtonClick = () => {
-    console.log("=== DEBUG BUTTON CLICKED ===");
-    console.log("Window object:", typeof window);
-    console.log("Eruda loaded:", typeof (window as any).eruda);
-    console.log("Marquee check data:", (window as any).__marqueeCheck);
-    console.log("Marquee debug data:", (window as any).__marqueeDebug);
-    console.log("Marquee started:", (window as any).__marqueeStarted);
-    
-    // Try multiple ways to access eruda
-    const eruda = (window as any).eruda;
-    if (eruda) {
-      console.log("Eruda found! Calling show()...");
-      if (typeof eruda.show === 'function') {
-        eruda.show();
-      } else {
-        console.log("Eruda.show is not a function. Methods:", Object.keys(eruda));
-      }
-    } else {
-      alert("Eruda not loaded yet. Check console for debug data above.");
-    }
-  };
 
   return (
     <>
@@ -380,49 +357,6 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
           </div>
         </div>
       </footer>
-
-      {/* DEBUG BUTTON - Remove after testing */}
-      <button
-        onClick={handleDebugButtonClick}
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          width: '50px',
-          height: '50px',
-          borderRadius: '50%',
-          background: '#ff0066',
-          color: 'white',
-          border: 'none',
-          fontSize: '24px',
-          cursor: 'pointer',
-          zIndex: 9999,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-        }}
-        title={erudaLoaded ? "Open DevTools" : "Click to view debug data in console"}
-      >
-        🔧
-      </button>
-
-      {/* ERUDA DevTools */}
-      <Script
-        src="https://cdn.jsdelivr.net/npm/eruda"
-        strategy="afterInteractive"
-        onLoad={() => {
-          console.log("Eruda script loaded!");
-          setErudaLoaded(true);
-          if (typeof (window as any).eruda !== 'undefined') {
-            console.log("Eruda object found, initializing...");
-            (window as any).eruda.init({
-              tool: ['console', 'elements', 'network', 'resources', 'info', 'settings']
-            });
-            (window as any).eruda.show();
-          }
-        }}
-        onError={() => {
-          console.error("Failed to load Eruda script");
-        }}
-      />
     </>
   );
 }
