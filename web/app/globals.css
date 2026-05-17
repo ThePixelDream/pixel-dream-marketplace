@@ -542,20 +542,32 @@ img, video { display: block; max-width: 100%; }
 .footer__legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; }
 .footer__legal a { font-weight: 500; color: #555560; }
 
-/* ---------- Container da Colagem Estática ---------- */
-
+/* ---------- Nova Colagem Estática (Versão Corrigida) ---------- */
 .feature-collage-wrapper {
-  width: 100%;
-  margin-bottom: 26px;
-  border-radius: 18px; /* Acompanha o design arredondado dos cards do seu site */
-  overflow: hidden;    /* Corta as arestas da imagem para fazer o arredondamento perfeito */
-  background: #0a0a0d;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  /* Força a largura a ignorar o padding do card e ocupar 100% do espaço real */
+  width: calc(100% + 44px) !important; 
+  margin-left: -22px !important;       
+  margin-top: 0 !important;
+  margin-bottom: 26px !important;
+  
+  /* Arredonda cirurgicamente apenas os cantos superiores */
+  border-top-left-radius: 24px !important;
+  border-top-right-radius: 24px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  
+  /* Trava o corte nas quinas */
+  overflow: hidden !important; 
+  display: block !important;
 }
 
 .feature-collage-static {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: cover !important;
+  
+  /* Garante que a própria imagem acompanhe o arredondamento caso o wrapper falhe */
+  border-top-left-radius: 24px !important;
+  border-top-right-radius: 24px !important;
 }
