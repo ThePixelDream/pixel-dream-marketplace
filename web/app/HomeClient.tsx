@@ -13,127 +13,116 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const [erudaLoaded, setErudaLoaded] = useState(false);
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduceMotion.matches) return;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduceMotion.matches) return;
 
-    const reelViewport = viewportRef.current;
-    const reelTrack = trackRef.current;
-    const reelSection = sectionRef.current;
+  const reelViewport = viewportRef.current;
+  const reelTrack = trackRef.current;
+  const reelSection = sectionRef.current;
 
-    if (!reelViewport || !reelTrack) return;
+  if (!reelViewport || !reelTrack) return;
 
-    let animationFrameId: number;
-    let marqueeStarted = false;
-    let debugLogCount = 0;
+  let animationFrameId: number;
+  let marqueeStarted = false;
+  let debugLogCount = 0;
 
-    function startMarquee() {
-      if (marqueeStarted || !reelViewport || !reelTrack) return;
-      marqueeStarted = true;
+  function startMarquee() {
+    if (marqueeStarted || !reelViewport || !reelTrack) return;
+    marqueeStarted = true;
 
-      reelViewport.style.overflowX = "auto";
+    reelViewport.style.overflowX = "auto";
 
-      const loopMs = 32000;
-      let scrollPos = 0;
-      let last = performance.now();
-      let pausedByHover = false;
+    const loopMs = 32000;
+    let scrollPos = 0;
+    let last = performance.now();
+    let pausedByHover = false;
 
-      if (reelSection && window.matchMedia("(hover: hover)").matches) {
-        const handleEnter = () => { pausedByHover = true; };
-        const handleLeave = () => { pausedByHover = false; };
-        reelSection.addEventListener("mouseenter", handleEnter);
-        reelSection.addEventListener("mouseleave", handleLeave);
-      }
-
-      function tick(now: number) {
-        const half = reelTrack!.scrollWidth * 0.5;
-
-        // DEBUG: Log first 20 ticks and every 100 ticks after
-        debugLogCount++;
-        if (debugLogCount <= 20 || debugLogCount % 100 === 0) {
-          const logData = {
-            viewportWidth: reelViewport!.clientWidth,
-            trackWidth: reelTrack!.scrollWidth,
-            scrollLeft: reelViewport!.scrollLeft,
-            calculatedScrollPos: scrollPos,
-            half: half,
-            overflowX: getComputedStyle(reelViewport!).overflowX,
-            trackDisplay: getComputedStyle(reelTrack!).display,
-            trackWrap: getComputedStyle(reelTrack!).flexWrap,
-            trackWidthCss: getComputedStyle(reelTrack!).width,
-            userAgent: navigator.userAgent,
-            pausedByHover: pausedByHover,
-            dt: now - last,
-          };
-          console.log(`[MARQUEE TICK #${debugLogCount}]`, logData);
-          // Store in window for easy access
-          (window as any).__marqueeDebug = logData;
-        }
-
-        if (half > 0 && !pausedByHover) {
-          const dt = now - last;
-          scrollPos += (half / loopMs) * dt;
-
-          while (scrollPos >= half) {
-            scrollPos -= half;
-          }
-
-          reelViewport!.scrollLeft = scrollPos;
-        }
-
-        last = now;
-        animationFrameId = requestAnimationFrame(tick);
-      }
-
-      animationFrameId = requestAnimationFrame(tick);
+    if (reelSection && window.matchMedia("(hover: hover)").matches) {
+      const handleEnter = () => { pausedByHover = true; };
+      const handleLeave = () => { pausedByHover = false; };
+      reelSection.addEventListener("mouseenter", handleEnter);
+      reelSection.addEventListener("mouseleave", handleLeave);
     }
 
-    function readyMarquee() {
-      if (!reelViewport || !reelTrack) return;
+    function tick(now: number) {
+      const half = reelTrack!.scrollWidth * 0.5;
 
-      function startWhenReady() {
-        const fullWidth = reelTrack!.scrollWidth;
-        const viewportWidth = reelViewport!.clientWidth;
-        
-        // DEBUG: Log each check
+      debugLogCount++;
+      if (debugLogCount <= 20 || debugLogCount % 100 === 0) {
         const logData = {
-          viewportWidth: viewportWidth,
-          trackWidth: fullWidth,
+          viewportWidth: reelViewport!.clientWidth,
+          trackWidth: reelTrack!.scrollWidth,
+          scrollLeft: reelViewport!.scrollLeft,
+          calculatedScrollPos: scrollPos,
+          half: half,
           overflowX: getComputedStyle(reelViewport!).overflowX,
           trackDisplay: getComputedStyle(reelTrack!).display,
           trackWrap: getComputedStyle(reelTrack!).flexWrap,
-          trackWidthCss: getComputedStyle(reelTrack!).width,
-          willStart: fullWidth > viewportWidth + 50,
           userAgent: navigator.userAgent,
-          timestamp: performance.now(),
+          pausedByHover: pausedByHover,
+          dt: now - last,
         };
-        console.log(`[MARQUEE CHECK]`, logData);
-        // Store in window for easy access
-        (window as any).__marqueeCheck = logData;
-
-        if (fullWidth > viewportWidth + 50) {
-          console.log(`[MARQUEE STARTING] - Condition met: ${fullWidth} > ${viewportWidth + 50}`);
-          (window as any).__marqueeStarted = true;
-          startMarquee();
-        } else {
-          console.log(`[MARQUEE RETRY] - Condition NOT met yet, retrying...`);
-          animationFrameId = requestAnimationFrame(startWhenReady);
-        }
+        console.log(`[MARQUEE TICK #${debugLogCount}]`, logData);
+        (window as any).__marqueeDebug = logData;
       }
 
-      setTimeout(startWhenReady, 300);
+      if (half > 0 && !pausedByHover) {
+        const dt = now - last;
+        scrollPos += (half / loopMs) * dt;
+
+        while (scrollPos >= half) {
+          scrollPos -= half;
+        }
+
+        reelViewport!.scrollLeft = scrollPos;
+      }
+
+      last = now;
+      animationFrameId = requestAnimationFrame(tick);
     }
 
-    if (document.readyState === "complete") {
-      readyMarquee();
-    } else {
-      window.addEventListener("load", readyMarquee);
+    animationFrameId = requestAnimationFrame(tick);
+  }
+
+  function readyMarquee() {
+    if (!reelViewport || !reelTrack) return;
+
+    function startWhenReady() {
+      const fullWidth = reelTrack!.scrollWidth;
+      const viewportWidth = reelViewport!.clientWidth;
+      
+      const logData = {
+        viewportWidth: viewportWidth,
+        trackWidth: fullWidth,
+        overflowX: getComputedStyle(reelViewport!).overflowX,
+        willStart: fullWidth > viewportWidth + 50,
+        userAgent: navigator.userAgent,
+        timestamp: performance.now(),
+      };
+      console.log(`[MARQUEE CHECK]`, logData);
+      (window as any).__marqueeCheck = logData;
+
+      if (fullWidth > viewportWidth + 50) {
+        console.log(`[MARQUEE STARTING] - Condition met: ${fullWidth} > ${viewportWidth + 50}`);
+        (window as any).__marqueeStarted = true;
+        startMarquee();
+      } else {
+        // Se os elementos ainda não renderizaram o tamanho completo na tela, tenta no próximo frame
+        animationFrameId = requestAnimationFrame(startWhenReady);
+      }
     }
 
-    return () => {
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("load", readyMarquee);
-    };
-  }, []);
+    // Mantém o pequeno delay de segurança para garantir a primeira renderização do DOM
+    setTimeout(startWhenReady, 300);
+  }
+
+  // CORREÇÃO AQUI: Executa direto sem esperar pelo window.load da página inteira
+  readyMarquee();
+
+  return () => {
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  };
+}, []);
 
   useEffect(() => {
     function tryPlayVideo(video: HTMLVideoElement) {
