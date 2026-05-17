@@ -2,7 +2,7 @@
 
 // web/app/HomeClient.tsx
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
@@ -10,6 +10,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const [erudaLoaded, setErudaLoaded] = useState(false);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -49,7 +50,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         // DEBUG: Log first 20 ticks and every 100 ticks after
         debugLogCount++;
         if (debugLogCount <= 20 || debugLogCount % 100 === 0) {
-          console.log(`[MARQUEE TICK #${debugLogCount}]`, {
+          const logData = {
             viewportWidth: reelViewport!.clientWidth,
             trackWidth: reelTrack!.scrollWidth,
             scrollLeft: reelViewport!.scrollLeft,
@@ -62,7 +63,10 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             userAgent: navigator.userAgent,
             pausedByHover: pausedByHover,
             dt: now - last,
-          });
+          };
+          console.log(`[MARQUEE TICK #${debugLogCount}]`, logData);
+          // Store in window for easy access
+          (window as any).__marqueeDebug = logData;
         }
 
         if (half > 0 && !pausedByHover) {
@@ -91,7 +95,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         const viewportWidth = reelViewport!.clientWidth;
         
         // DEBUG: Log each check
-        console.log(`[MARQUEE CHECK]`, {
+        const logData = {
           viewportWidth: viewportWidth,
           trackWidth: fullWidth,
           overflowX: getComputedStyle(reelViewport!).overflowX,
@@ -101,10 +105,14 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
           willStart: fullWidth > viewportWidth + 50,
           userAgent: navigator.userAgent,
           timestamp: performance.now(),
-        });
+        };
+        console.log(`[MARQUEE CHECK]`, logData);
+        // Store in window for easy access
+        (window as any).__marqueeCheck = logData;
 
         if (fullWidth > viewportWidth + 50) {
           console.log(`[MARQUEE STARTING] - Condition met: ${fullWidth} > ${viewportWidth + 50}`);
+          (window as any).__marqueeStarted = true;
           startMarquee();
         } else {
           console.log(`[MARQUEE RETRY] - Condition NOT met yet, retrying...`);
@@ -168,6 +176,28 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
       window.removeEventListener("pageshow", handlePageShow);
     };
   }, []);
+
+  const handleDebugButtonClick = () => {
+    console.log("=== DEBUG BUTTON CLICKED ===");
+    console.log("Window object:", typeof window);
+    console.log("Eruda loaded:", typeof (window as any).eruda);
+    console.log("Marquee check data:", (window as any).__marqueeCheck);
+    console.log("Marquee debug data:", (window as any).__marqueeDebug);
+    console.log("Marquee started:", (window as any).__marqueeStarted);
+    
+    // Try multiple ways to access eruda
+    const eruda = (window as any).eruda;
+    if (eruda) {
+      console.log("Eruda found! Calling show()...");
+      if (typeof eruda.show === 'function') {
+        eruda.show();
+      } else {
+        console.log("Eruda.show is not a function. Methods:", Object.keys(eruda));
+      }
+    } else {
+      alert("Eruda not loaded yet. Check console for debug data above.");
+    }
+  };
 
   return (
     <>
@@ -359,11 +389,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
 
       {/* DEBUG BUTTON - Remove after testing */}
       <button
-        onClick={() => {
-          if (typeof (window as any).eruda !== 'undefined') {
-            (window as any).eruda.show();
-          }
-        }}
+        onClick={handleDebugButtonClick}
         style={{
           position: 'fixed',
           bottom: '20px',
@@ -379,7 +405,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
           zIndex: 9999,
           boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
         }}
-        title="Open DevTools"
+        title={erudaLoaded ? "Open DevTools" : "Click to view debug data in console"}
       >
         🔧
       </button>
@@ -388,16 +414,21 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
       <Script
         src="https://cdn.jsdelivr.net/npm/eruda"
         strategy="afterInteractive"
-      />
-      <Script id="eruda-init" strategy="afterInteractive">
-        {`
-          if (typeof eruda !== 'undefined') {
-            eruda.init({
+        onLoad={() => {
+          console.log("Eruda script loaded!");
+          setErudaLoaded(true);
+          if (typeof (window as any).eruda !== 'undefined') {
+            console.log("Eruda object found, initializing...");
+            (window as any).eruda.init({
               tool: ['console', 'elements', 'network', 'resources', 'info', 'settings']
             });
+            (window as any).eruda.show();
           }
-        `}
-      </Script>
+        }}
+        onError={() => {
+          console.error("Failed to load Eruda script");
+        }}
+      />
     </>
   );
 }
