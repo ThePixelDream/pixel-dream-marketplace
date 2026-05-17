@@ -1,4 +1,5 @@
 // web/app/product/[id]/page.tsx
+// [id] accepts both UUID and slug (e.g. "asian010")
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
@@ -9,34 +10,22 @@ export const dynamic = "force-dynamic";
 
 const PLANS = [
   {
-    id: "basic",
-    name: "BASIC",
-    subtitle: "Starter Content Pack",
+    id: "basic", name: "BASIC", subtitle: "Starter Content Pack",
     description: "Essential content to get your Instagram moving.",
-    priceKey: "price_basic" as const,
+    priceKey: "price_basic" as const, highlight: false, bonus: null,
     items: ["25 Instagram Posts","10 Instagram Stories","10 Instagram Reels","5 NSFW Wall Posts","5 NSFW Images","1 NSFW Banner","LoRA"],
-    highlight: false,
-    bonus: null,
   },
   {
-    id: "pro",
-    name: "PRO",
-    subtitle: "Most Popular",
+    id: "pro", name: "PRO", subtitle: "Most Popular",
     description: "The perfect balance of content and value for consistent growth.",
-    priceKey: "price_pro" as const,
+    priceKey: "price_pro" as const, highlight: true, bonus: null,
     items: ["50 Instagram Posts","20 Instagram Stories","25 Instagram Reels","10 NSFW Wall Posts","10 NSFW Images","1 NSFW Banner","LoRA"],
-    highlight: true,
-    bonus: null,
   },
   {
-    id: "premium",
-    name: "PREMIUM",
-    subtitle: "Maximum Impact",
+    id: "premium", name: "PREMIUM", subtitle: "Maximum Impact",
     description: "Maximize your presence with high-volume content and premium assets.",
-    priceKey: "price_premium" as const,
+    priceKey: "price_premium" as const, highlight: false, bonus: "300 Premium Prompts Pack",
     items: ["80 Instagram Posts","30 Instagram Stories","40 Instagram Reels","20 NSFW Wall Posts","20 NSFW Images","1 NSFW Banner","Custom LoRA"],
-    highlight: false,
-    bonus: "300 Premium Prompts Pack",
   },
 ];
 
@@ -52,12 +41,16 @@ function CheckIcon({ pink = false }: { pink?: boolean }) {
 export default async function ProductPage({ params }: { params: { id: string } }) {
   const supabase = await createSupabaseServerClient();
 
-  const { data: product } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", params.id)
-    .maybeSingle();
+  // Try by UUID first, then by slug
+  let query = supabase.from("products").select("*");
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id);
+  if (isUuid) {
+    query = query.eq("id", params.id);
+  } else {
+    query = query.eq("slug", params.id);
+  }
 
+  const { data: product } = await query.maybeSingle();
   if (!product) notFound();
 
   const gallery: string[] = product.gallery_urls ?? [];
@@ -68,18 +61,16 @@ export default async function ProductPage({ params }: { params: { id: string } }
       {/* HEADER */}
       <div className={styles.header}>
         <div className={styles.coverWrap}>
-          {product.cover_image_url ? (
-            <img src={product.cover_image_url} alt={product.title} className={styles.cover} />
-          ) : (
-            <div className={styles.coverPlaceholder} />
-          )}
+          {product.cover_image_url
+            ? <img src={product.cover_image_url} alt={product.title} className={styles.cover} />
+            : <div className={styles.coverPlaceholder} />
+          }
         </div>
         <div className={styles.avatarWrap}>
-          {product.avatar_image_url ? (
-            <img src={product.avatar_image_url} alt="" className={styles.avatar} />
-          ) : (
-            <div className={styles.avatarPlaceholder} />
-          )}
+          {product.avatar_image_url
+            ? <img src={product.avatar_image_url} alt="" className={styles.avatar} />
+            : <div className={styles.avatarPlaceholder} />
+          }
         </div>
         <div className={styles.headerInfo}>
           <div className={styles.nameRow}>
@@ -95,9 +86,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
                 AVAILABLE
               </span>
             )}
-            {product.sold && (
-              <span className={styles.soldTag}>SOLD</span>
-            )}
+            {product.sold && <span className={styles.soldTag}>SOLD</span>}
           </div>
           {(product.tags ?? []).length > 0 && (
             <div className={styles.tagRow}>
