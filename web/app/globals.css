@@ -179,17 +179,37 @@ img, video { display: block; max-width: 100%; }
 }
 
 /* ---------- Video reel — infinite auto carousel ---------- */
-.reel { padding: 12px 0 44px; }
+
+.reel {
+  padding: 12px 0 44px;
+}
+
 .reel__viewport {
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
+
   scroll-behavior: auto;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+
   touch-action: pan-x;
+
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
 }
 .reel__viewport::-webkit-scrollbar { display: none; }
 .reel__track {
