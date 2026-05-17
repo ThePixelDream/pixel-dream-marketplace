@@ -3,6 +3,7 @@
 // web/app/HomeClient.tsx
 
 import { useEffect, useRef } from "react";
+import Script from "next/script";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const allVideos = [...videoUrls, ...videoUrls];
@@ -356,7 +357,18 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         </div>
       </footer>
 
-
+      {/* ERUDA DevTools for mobile debugging */}
+      <Script
+        src="https://cdn.jsdelivr.net/npm/eruda"
+        strategy="afterInteractive"
+      />
+      <Script id="eruda-init" strategy="afterInteractive">
+        {`
+          if (typeof eruda !== 'undefined') {
+            eruda.init();
+          }
+        `}
+      </Script>
     </>
   );
 }
