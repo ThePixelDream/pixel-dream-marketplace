@@ -5,7 +5,6 @@
 import Script from "next/script";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
-  // Duplicate for seamless loop
   const allVideos = [...videoUrls, ...videoUrls];
 
   return (
@@ -25,9 +24,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             <span className="nav__brand-text">The Pixel Dream</span>
           </a>
           <div className="nav__actions">
-            <a className="nav__login" href="/marketplace">
-              Login · Sign up
-            </a>
+            <a className="nav__login" href="/login">Login · Sign up</a>
           </div>
         </div>
       </header>
@@ -43,12 +40,11 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
               AI girls available for monetization, licensing, and exclusive acquisition.
             </p>
             <div className="hero__cta-row">
-              <a className="btn-hero-black" href="/marketplace">
-                View Marketplace
-              </a>
-              <a className="btn-hero-white" href="#workflow">
-                More Services
-              </a>
+              <a className="btn-hero-black" href="/marketplace">View Marketplace</a>
+              <div className="hero__secondary-row">
+                <a className="btn-hero-white" href="#workflow">More Services</a>
+                <a className="btn-hero-white" href="/signup?affiliate=1">Become an Affiliate</a>
+              </div>
             </div>
           </section>
 
@@ -100,7 +96,6 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
               </span>
               Create your workflow
             </a>
-
             <div className="canvas-mock" aria-hidden="true">
               <div className="canvas-mock__grid">
                 <div className="canvas-card">
@@ -171,10 +166,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
               The largest library of licensable AI faces and bodies — built for monetization workflows.
             </p>
             <a className="btn-sparkle" href="/marketplace">
-              <img
-                src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png"
-                width={22} height={22} alt="" aria-hidden="true"
-              />
+              <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png" width={22} height={22} alt="" aria-hidden="true" />
               Browse the library
             </a>
           </div>
@@ -227,7 +219,6 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
           });
 
           bootReelVideos();
-
           document.addEventListener("touchstart", function() { bootReelVideos(); }, { passive: true, capture: true, once: true });
           document.addEventListener("click", function() { bootReelVideos(); }, { once: true });
           document.addEventListener("visibilitychange", function () { if (!document.hidden) bootReelVideos(); });
@@ -257,28 +248,26 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
               if (half > 0) {
                 if (!pausedByHover) {
                   var dt = now - last;
-                  last = now;
                   scrollPos += (half / loopMs) * dt;
                   while (scrollPos >= half) scrollPos -= half;
                   reelViewport.scrollLeft = scrollPos;
-                } else {
-                  last = now;
                 }
               }
+              last = now;
               requestAnimationFrame(tick);
             }
             requestAnimationFrame(tick);
           }
 
           function readyMarquee() {
-            if (reduceMotion.matches || marqueeStarted || !reelViewport || !reelTrack) return;
+            if (reduceMotion.matches || !reelViewport || !reelTrack) return;
             var tries = 0;
             function attempt() {
               if (marqueeStarted || reduceMotion.matches) return;
               tries++;
               if (reelTrack.scrollWidth > reelViewport.clientWidth + 10) {
                 startMarquee();
-              } else if (tries < 200) {
+              } else if (tries < 300) {
                 requestAnimationFrame(attempt);
               }
             }
