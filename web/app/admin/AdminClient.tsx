@@ -241,7 +241,7 @@ export default function AdminClient({
   const [cropTarget, setCropTarget] = useState<"cover" | "avatar">("cover");
 
   const [heroVideos, setHeroVideos] = useState<HeroVideo[]>(
-    initHero.length >= 4 ? initHero : [{ url: "" }, { url: "" }, { url: "" }, { url: "" }]
+    Array.from({ length: 10 }, (_, i) => initHero[i] ?? { url: "" })
   );
 
   const totalRevenue = orders.filter(o => o.status === "paid").reduce((s, o) => s + o.amount_cents, 0);
@@ -567,26 +567,35 @@ export default function AdminClient({
         {/* HERO VIDEOS */}
         {tab === "hero" && (
           <div style={S.card}>
-            <div style={S.sectionTitle}>Hero Videos</div>
-            <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Configure the 4 videos in the landing page carousel.</p>
-            {heroVideos.map((v, i) => (
-              <div key={i} style={{ marginBottom: 16, padding: 16, border: `1px solid ${C.border}`, borderRadius: 12, background: C.surface2 }}>
-                <div style={{ fontWeight: 700, color: C.text, marginBottom: 10 }}>Video {i + 1}</div>
-                <div style={S.uploadBox} onClick={() => pickFile("video/*", false, ([f]) => {
-                  uploadFile(f, `hero/video-${i}-${Date.now()}`).then(url => {
-                    setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { url } : hv));
-                  });
-                })}>
-                  {v.url
-                    ? <video src={v.url} style={{ width: "100%", borderRadius: 8, maxHeight: 160 }} controls muted />
-                    : <span>Click to upload video</span>
-                  }
+            <div style={S.sectionTitle}>Hero Videos (10 slots)</div>
+            <p style={{ color: C.muted, fontSize: 14, marginBottom: 20 }}>
+              Configure up to 10 videos for the landing page carousel. Click a slot to upload or paste a URL.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 20 }}>
+              {heroVideos.map((v, i) => (
+                <div key={i} style={{ background: C.surface2, border: `1px solid ${C.border}`, borderRadius: 10, padding: 10 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    Video {i + 1}
+                  </div>
+                  <div
+                    style={{ background: C.bg, border: `1px dashed ${C.border}`, borderRadius: 8, height: 60, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 12, color: v.url ? C.green : C.muted, marginBottom: 6 }}
+                    onClick={() => pickFile("video/*", false, ([f]) => {
+                      uploadFile(f, `hero/video-${i}-${Date.now()}`).then(url => {
+                        setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { url } : hv));
+                      });
+                    })}
+                  >
+                    {v.url ? "✓ Uploaded" : "Click to upload"}
+                  </div>
+                  <input
+                    style={{ ...S.input, fontSize: 11, height: 32, padding: "0 8px" }}
+                    value={v.url}
+                    onChange={e => setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { url: e.target.value } : hv))}
+                    placeholder="Paste URL..."
+                  />
                 </div>
-                <input style={{ ...S.input, marginTop: 8 }} value={v.url}
-                  onChange={e => setHeroVideos(prev => prev.map((hv, hi) => hi === i ? { url: e.target.value } : hv))}
-                  placeholder="Or paste video URL..." />
-              </div>
-            ))}
+              ))}
+            </div>
             <button style={S.btnPink} onClick={saveHero} disabled={loading}>
               {loading ? "Saving..." : "Save hero videos"}
             </button>
