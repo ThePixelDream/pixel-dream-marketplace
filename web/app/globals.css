@@ -411,7 +411,6 @@ img, video { display: block; max-width: 100%; }
   scroll-snap-type: x mandatory;
   padding-bottom: 8px;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 .testi__scroller::-webkit-scrollbar { display: none; }
 .testi-card {
