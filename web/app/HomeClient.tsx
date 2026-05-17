@@ -2,10 +2,134 @@
 
 // web/app/HomeClient.tsx
 
-import Script from "next/script";
+import { useEffect, useRef } from "react";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const allVideos = [...videoUrls, ...videoUrls];
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reduceMotion.matches) return;
+
+    const reelViewport = viewportRef.current;
+    const reelTrack = trackRef.current;
+    const reelSection = sectionRef.current;
+
+    if (!reelViewport || !reelTrack) return;
+
+    let animationFrameId: number;
+    let marqueeStarted = false;
+
+    function startMarquee() {
+      if (marqueeStarted || !reelViewport || !reelTrack) return;
+      marqueeStarted = true;
+
+      reelViewport.style.overflowX = "auto";
+
+      const loopMs = 32000;
+      let scrollPos = 0;
+      let last = performance.now();
+      let pausedByHover = false;
+
+      if (reelSection && window.matchMedia("(hover: hover)").matches) {
+        const handleEnter = () => { pausedByHover = true; };
+        const handleLeave = () => { pausedByHover = false; };
+        reelSection.addEventListener("mouseenter", handleEnter);
+        reelSection.addEventListener("mouseleave", handleLeave);
+      }
+
+      function tick(now: number) {
+        const half = reelTrack!.scrollWidth * 0.5;
+
+        if (half > 0 && !pausedByHover) {
+          const dt = now - last;
+          scrollPos += (half / loopMs) * dt;
+
+          while (scrollPos >= half) {
+            scrollPos -= half;
+          }
+
+          reelViewport!.scrollLeft = scrollPos;
+        }
+
+        last = now;
+        animationFrameId = requestAnimationFrame(tick);
+      }
+
+      animationFrameId = requestAnimationFrame(tick);
+    }
+
+    function readyMarquee() {
+      if (!reelViewport || !reelTrack) return;
+
+      function startWhenReady() {
+        const fullWidth = reelTrack!.scrollWidth;
+        if (fullWidth > reelViewport!.clientWidth + 50) {
+          startMarquee();
+        } else {
+          animationFrameId = requestAnimationFrame(startWhenReady);
+        }
+      }
+
+      setTimeout(startWhenReady, 300);
+    }
+
+    if (document.readyState === "complete") {
+      readyMarquee();
+    } else {
+      window.addEventListener("load", readyMarquee);
+    }
+
+    return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("load", readyMarquee);
+    };
+  }, []);
+
+  useEffect(() => {
+    function tryPlayVideo(video: HTMLVideoElement) {
+      if (!video) return;
+      video.muted = true;
+      video.defaultMuted = true;
+      video.setAttribute("muted", "");
+      const p = video.play();
+      if (p !== undefined) p.catch(() => {});
+    }
+
+    function bootReelVideos() {
+      document.querySelectorAll(".reel__slide video").forEach((v) => {
+        const video = v as HTMLVideoElement;
+        video.setAttribute("playsinline", "");
+        video.setAttribute("webkit-playsinline", "");
+        tryPlayVideo(video);
+      });
+    }
+
+    document.querySelectorAll(".reel__slide video").forEach((v) => {
+      const video = v as HTMLVideoElement;
+      video.addEventListener("loadeddata", () => tryPlayVideo(video));
+    });
+
+    bootReelVideos();
+    
+    const handleTouch = () => bootReelVideos();
+    const handleClick = () => bootReelVideos();
+    const handleVisibility = () => { if (!document.hidden) bootReelVideos(); };
+    const handlePageShow = (e: PageTransitionEvent) => { if (e.persisted) bootReelVideos(); };
+
+    document.addEventListener("touchstart", handleTouch, { passive: true, capture: true, once: true });
+    document.addEventListener("click", handleClick, { once: true });
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
 
   return (
     <>
@@ -48,9 +172,9 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             </div>
           </section>
 
-          <section className="reel" aria-label="Video previews">
-            <div className="reel__viewport" dir="ltr">
-              <div className="reel__track">
+          <section ref={sectionRef} className="reel" aria-label="Video previews">
+            <div ref={viewportRef} className="reel__viewport" dir="ltr">
+              <div ref={trackRef} className="reel__track">
                 {allVideos.map((src, i) => (
                   <div
                     key={i}
@@ -195,108 +319,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         </div>
       </footer>
 
-      <Script id="reel-marquee" strategy="afterInteractive">{`
-        (function () {
-          function tryPlayVideo(video) {
-            if (!video) return;
-            video.muted = true;
-            video.defaultMuted = true;
-            video.setAttribute("muted", "");
-            var p = video.play();
-            if (p !== undefined) p.catch(function () {});
-          }
 
-          function bootReelVideos() {
-            document.querySelectorAll(".reel__slide video").forEach(function (v) {
-              v.setAttribute("playsinline", "");
-              v.setAttribute("webkit-playsinline", "");
-              tryPlayVideo(v);
-            });
-          }
-
-          document.querySelectorAll(".reel__slide video").forEach(function (v) {
-            v.addEventListener("loadeddata", function () { tryPlayVideo(v); });
-          });
-
-          bootReelVideos();
-          document.addEventListener("touchstart", function() { bootReelVideos(); }, { passive: true, capture: true, once: true });
-          document.addEventListener("click", function() { bootReelVideos(); }, { once: true });
-          document.addEventListener("visibilitychange", function () { if (!document.hidden) bootReelVideos(); });
-          window.addEventListener("pageshow", function (e) { if (e.persisted) bootReelVideos(); });
-
-          var reelViewport = document.querySelector(".reel__viewport");
-          var reelTrack = document.querySelector(".reel__track");
-          var reelSection = document.querySelector(".reel");
-          var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-          var marqueeStarted = false;
-
-          function startMarquee() {
-  if (marqueeStarted || !reelViewport || !reelTrack || reduceMotion.matches) {
-    return;
-  }
-
-  marqueeStarted = true;
-
-  reelViewport.style.overflowX = "auto";
-
-  var loopMs = 32000;
-  var scrollPos = 0;
-  var last = performance.now();
-  var pausedByHover = false;
-
-  if (reelSection && window.matchMedia("(hover: hover)").matches) {
-    reelSection.addEventListener("mouseenter", function () {
-      pausedByHover = true;
-    });
-
-    reelSection.addEventListener("mouseleave", function () {
-      pausedByHover = false;
-    });
-  }
-
-  function tick(now) {
-    var half = reelTrack.scrollWidth * 0.5;
-
-    if (half > 0 && !pausedByHover) {
-      var dt = now - last;
-
-      scrollPos += (half / loopMs) * dt;
-
-      while (scrollPos >= half) {
-        scrollPos -= half;
-      }
-
-      reelViewport.scrollLeft = scrollPos;
-    }
-
-    last = now;
-
-    requestAnimationFrame(tick);
-  }
-
-  requestAnimationFrame(tick);
-}
-
-          function readyMarquee() {
-  if (reduceMotion.matches || !reelViewport || !reelTrack) return;
-
-  function startWhenReady() {
-    var fullWidth = reelTrack.scrollWidth;
-
-    if (fullWidth > reelViewport.clientWidth + 50) {
-      startMarquee();
-    } else {
-      requestAnimationFrame(startWhenReady);
-    }
-  }
-
-  setTimeout(startWhenReady, 300);
-}
-
-          if (document.readyState === "complete") { readyMarquee(); }
-          else { window.addEventListener("load", readyMarquee); }
-        })();
-      `}</Script>
     </>
   );
 }
