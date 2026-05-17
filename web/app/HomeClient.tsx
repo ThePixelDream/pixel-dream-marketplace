@@ -357,7 +357,34 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         </div>
       </footer>
 
-      {/* ERUDA DevTools for mobile debugging */}
+      {/* DEBUG BUTTON - Remove after testing */}
+      <button
+        onClick={() => {
+          if (typeof (window as any).eruda !== 'undefined') {
+            (window as any).eruda.show();
+          }
+        }}
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          width: '50px',
+          height: '50px',
+          borderRadius: '50%',
+          background: '#ff0066',
+          color: 'white',
+          border: 'none',
+          fontSize: '24px',
+          cursor: 'pointer',
+          zIndex: 9999,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+        }}
+        title="Open DevTools"
+      >
+        🔧
+      </button>
+
+      {/* ERUDA DevTools */}
       <Script
         src="https://cdn.jsdelivr.net/npm/eruda"
         strategy="afterInteractive"
@@ -365,7 +392,9 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
       <Script id="eruda-init" strategy="afterInteractive">
         {`
           if (typeof eruda !== 'undefined') {
-            eruda.init();
+            eruda.init({
+              tool: ['console', 'elements', 'network', 'resources', 'info', 'settings']
+            });
           }
         `}
       </Script>
