@@ -375,7 +375,7 @@ function ProductForm({
     setLoading(true); setMsg("");
     try {
       const title = isEdit ? initialData!.title : getNextTitle(titleBase as TitleBase);
-      const slug = slugify(title) + (isEdit ? "" : "-" + Date.now());
+      const slug = slugify(title); // e.g. "asian010"
 
       let cover_image_url = initialData?.cover_image_url ?? "";
       let avatar_image_url = initialData?.avatar_image_url ?? "";
