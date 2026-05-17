@@ -442,45 +442,43 @@ img, video { display: block; max-width: 100%; }
   padding: 48px 20px 56px;
   border-top: 1px solid rgba(255,255,255,0.06);
 }
+
 .feature-dark__card {
   max-width: 920px;
   margin: 0 auto;
   background: linear-gradient(165deg, #1a1a22 0%, #12121a 50%, #0e0e14 100%);
   border-radius: 24px;
   border: 1px solid rgba(255,255,255,0.08);
-  padding: 28px 22px 32px;
+  
+  /* CORREÇÃO: Topo zerado para colar a imagem na borda. 
+     Mantém 22px nas laterais e 32px na base para os textos */
+  padding: 0 22px 32px; 
+  
   box-shadow: 0 28px 60px rgba(0,0,0,0.5);
+  overflow: hidden; /* Garante que nada escape do raio de 24px do card */
 }
-.feature-dark__visual {
-  position: relative;
-  height: min(52vw, 260px);
+
+/* ---------- Nova Colagem Estática (Ajustada) ---------- */
+.feature-collage-wrapper {
+  /* Expande a largura para anular os 22px de padding lateral do card pai */
+  width: calc(100% + 44px); 
+  margin-left: -22px;       
   margin-bottom: 26px;
-  perspective: 800px;
+  
+  /* Herda exatamente o mesmo arredondamento das quinas do card pai */
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  overflow: hidden; 
 }
-.feature-dark__stack {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.feature-dark__stack img {
-  position: absolute;
-  width: min(38%, 140px);
-  aspect-ratio: 3/4;
+
+.feature-collage-static {
+  width: 100%;
+  height: auto;
+  display: block;
   object-fit: cover;
-  border-radius: 12px;
-  border: 2px solid rgba(255,255,255,0.12);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
 }
-.feature-dark__stack img:nth-child(1) { transform: rotate(-12deg) translateX(-48px); z-index: 1; }
-.feature-dark__stack img:nth-child(2) { transform: rotate(4deg) translateX(0); z-index: 3; width: min(44%, 165px); }
-.feature-dark__stack img:nth-child(3) { transform: rotate(14deg) translateX(52px); z-index: 2; }
-.feature-dark__hero-img { width: 100%; border-radius: 16px; margin-top: 8px; display: none; }
-@media (max-width: 520px) {
-  .feature-dark__stack { display: none; }
-  .feature-dark__hero-img { display: block; }
-}
+
+/* ---------- Textos e Botão ---------- */
 .feature-dark h2 {
   font-family: "Funnel Display", sans-serif;
   color: #fff;
