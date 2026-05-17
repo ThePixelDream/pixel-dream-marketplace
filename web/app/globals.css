@@ -125,7 +125,6 @@ img, video { display: block; max-width: 100%; }
   align-items: center;
   gap: 14px;
 }
-/* Row with More Services + Become an Affiliate side by side */
 .hero__secondary-row {
   display: flex;
   align-items: center;
@@ -179,35 +178,40 @@ img, video { display: block; max-width: 100%; }
 }
 
 /* ---------- Video reel — infinite auto carousel ---------- */
-
 .reel {
   padding: 12px 0 44px;
   overflow: hidden;
-  width: 100%; /* Garante que a seção ocupe toda a largura */
+  width: 100%;
 }
 
 .reel__viewport {
-  overflow-x: hidden; 
-  overflow-y: hidden;
+  overflow-x: hidden !important; 
+  overflow-y: hidden !important;
   width: 100%;
-  display: block; /* Força o container a se comportar como bloco limpo */
+  display: block;
+  -webkit-overflow-scrolling: touch;
+  
+  /* Remove a barra no Firefox e IE */
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+/* Força a barra de rolagem a sumir no Chrome, Safari e Edge de Desktop */
+.reel__viewport::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .reel__track {
   display: flex;
   flex-direction: row;
-  
-  /* CORREÇÃO 1: 'initial' ou 'nowrap' força o flexbox a NUNCA quebrar os vídeos em linhas */
   flex-wrap: nowrap !important; 
-  
   align-items: flex-start;
   gap: 14px;
   padding: 0 20px 10px;
-  
-  /* CORREÇÃO 2: Garante que a track estique infinitamente de acordo com a soma dos vídeos */
   width: max-content !important; 
   min-width: max-content;
-
   animation: marqueeAnimate 32000ms linear infinite;
   will-change: transform;
 }
@@ -217,10 +221,8 @@ img, video { display: block; max-width: 100%; }
 }
 
 .reel__slide {
-  /* CORREÇÃO 3: Impede o Safari mobile de "espremer" ou encolher os vídeos para caber na tela */
   flex: 0 0 200px !important; 
   width: 200px;
-
   border-radius: var(--radius);
   overflow: hidden;
   background: #0c0c0e;
@@ -230,7 +232,6 @@ img, video { display: block; max-width: 100%; }
   box-shadow: 0 16px 44px rgba(0,0,0,0.2);
 }
 
-/* Mantendo seus Media Queries originais de tamanho, apenas adicionando a trava de encolhimento */
 @media (min-width: 600px) {
   .reel__slide {
     flex: 0 0 240px !important;
@@ -244,6 +245,7 @@ img, video { display: block; max-width: 100%; }
     width: 270px;
   }
 }
+
 /* ---------- Dark workflow ---------- */
 .band-dark {
   background: linear-gradient(180deg, #141418 0%, #0c0c0f 100%);
@@ -449,33 +451,35 @@ img, video { display: block; max-width: 100%; }
   background: linear-gradient(165deg, #1a1a22 0%, #12121a 50%, #0e0e14 100%);
   border-radius: 24px;
   border: 1px solid rgba(255,255,255,0.08);
-  
-  /* CORREÇÃO: Topo zerado para colar a imagem na borda. 
-     Mantém 22px nas laterais e 32px na base para os textos */
   padding: 0 22px 32px; 
-  
   box-shadow: 0 28px 60px rgba(0,0,0,0.5);
-  overflow: hidden; /* Garante que nada escape do raio de 24px do card */
+  overflow: hidden;
 }
 
-/* ---------- Nova Colagem Estática (Ajustada) ---------- */
+/* ---------- Nova Colagem Estática (Versão Blindada) ---------- */
 .feature-collage-wrapper {
-  /* Expande a largura para anular os 22px de padding lateral do card pai */
-  width: calc(100% + 44px); 
-  margin-left: -22px;       
-  margin-bottom: 26px;
+  width: calc(100% + 44px) !important; 
+  margin-left: -22px !important;       
+  margin-top: 0 !important;
+  margin-bottom: 26px !important;
   
-  /* Herda exatamente o mesmo arredondamento das quinas do card pai */
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
-  overflow: hidden; 
+  border-top-left-radius: 24px !important;
+  border-top-right-radius: 24px !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  
+  overflow: hidden !important; 
+  display: block !important;
 }
 
 .feature-collage-static {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: cover !important;
+  
+  border-top-left-radius: 24px !important;
+  border-top-right-radius: 24px !important;
 }
 
 /* ---------- Textos e Botão ---------- */
@@ -541,33 +545,3 @@ img, video { display: block; max-width: 100%; }
 .footer__bottom .copy { margin-bottom: 12px; font-weight: 600; color: #44444d; }
 .footer__legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; }
 .footer__legal a { font-weight: 500; color: #555560; }
-
-/* ---------- Nova Colagem Estática (Versão Corrigida) ---------- */
-.feature-collage-wrapper {
-  /* Força a largura a ignorar o padding do card e ocupar 100% do espaço real */
-  width: calc(100% + 44px) !important; 
-  margin-left: -22px !important;       
-  margin-top: 0 !important;
-  margin-bottom: 26px !important;
-  
-  /* Arredonda cirurgicamente apenas os cantos superiores */
-  border-top-left-radius: 24px !important;
-  border-top-right-radius: 24px !important;
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-  
-  /* Trava o corte nas quinas */
-  overflow: hidden !important; 
-  display: block !important;
-}
-
-.feature-collage-static {
-  width: 100% !important;
-  height: auto !important;
-  display: block !important;
-  object-fit: cover !important;
-  
-  /* Garante que a própria imagem acompanhe o arredondamento caso o wrapper falhe */
-  border-top-left-radius: 24px !important;
-  border-top-right-radius: 24px !important;
-}
