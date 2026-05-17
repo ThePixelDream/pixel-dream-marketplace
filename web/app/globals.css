@@ -199,7 +199,8 @@ img, video { display: block; max-width: 100%; }
   cursor: grab;
   -webkit-overflow-scrolling: touch;
 
-  -webkit-mask-image: linear-gradient(
+  /* TEMP DEBUG: Commenting out mask-image to test if scroll works on iOS Safari */
+  /* -webkit-mask-image: linear-gradient(
     90deg,
     transparent,
     #000 6%,
@@ -213,7 +214,7 @@ img, video { display: block; max-width: 100%; }
     #000 6%,
     #000 94%,
     transparent
-  );
+  ); */
 }
 
 .reel__viewport::-webkit-scrollbar {
