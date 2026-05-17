@@ -189,6 +189,7 @@ img, video { display: block; max-width: 100%; }
   -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  touch-action: pan-x;
 }
 .reel__viewport::-webkit-scrollbar { display: none; }
 .reel__track {
