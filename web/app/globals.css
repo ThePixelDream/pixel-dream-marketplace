@@ -232,9 +232,6 @@ img, video { display: block; max-width: 100%; }
 
   width: max-content;
 
-  will-change: transform;
-
-  animation: reel-scroll 40s linear infinite;
 }
 
 .reel__slide {
@@ -283,22 +280,23 @@ img, video { display: block; max-width: 100%; }
   -webkit-transform: translateZ(0);
 }
 
-@keyframes reel-scroll {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-
-  .reel__track {
-    animation: none;
+  .reel__viewport {
+    overflow-x: visible;
   }
-
+  .reel__slide--dup {
+    display: none !important;
+  }
+  .reel__track {
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1200px;
+  }
+  .reel__slide:not(.reel__slide--dup) {
+    flex: 0 0 min(42vw, 200px);
+  }
 }
 /* ---------- Dark workflow ---------- */
 .band-dark {
