@@ -244,20 +244,28 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             }
 
             function tick(now) {
-              var half = reelTrack.scrollWidth / 2;
-              if (half > 0) {
-                if (!pausedByHover) {
-                  var dt = now - last;
-                  scrollPos += (half / loopMs) * dt;
-                  while (scrollPos >= half) scrollPos -= half;
-                  reelViewport.scrollLeft = scrollPos;
-                }
-              }
-              last = now;
-              requestAnimationFrame(tick);
-            }
-            requestAnimationFrame(tick);
-          }
+  var half = reelTrack.scrollWidth / 2;
+
+  if (half > 0) {
+    if (!pausedByHover) {
+      var dt = now - last;
+
+      scrollPos += (half / loopMs) * dt;
+
+      while (scrollPos >= half) {
+        scrollPos -= half;
+      }
+
+      reelViewport.scrollTo({
+        left: scrollPos,
+        behavior: "auto"
+      });
+    }
+  }
+
+  last = now;
+  requestAnimationFrame(tick);
+}
 
           function readyMarquee() {
             if (reduceMotion.matches || !reelViewport || !reelTrack) return;
