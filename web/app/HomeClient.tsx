@@ -2,25 +2,22 @@
 
 // web/app/HomeClient.tsx
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
-  // Duplica a lista para criar o efeito infinito visual perfeito
   const allVideos = [...videoUrls, ...videoUrls];
   const sectionRef = useRef<HTMLElement>(null);
+  
+  // CHAVE CRÍTICA: Força o React a remontar todo o HTML dos vídeos do zero se o usuário voltar na página
+  const [reelKey, setReelKey] = useState(0);
 
-  // EFFECT 1: Gerenciamento do Estado de Pause ao passar o mouse (Opcional & Seguro)
+  // EFFECT 1: Controle de pausa ao passar o mouse
   useEffect(() => {
     const reelSection = sectionRef.current;
     if (!reelSection) return;
 
-    // Pausa a animação CSS quando o usuário passa o mouse (apenas desktops)
-    const handleEnter = () => {
-      reelSection.classList.add("reel--paused");
-    };
-    const handleLeave = () => {
-      reelSection.classList.remove("reel--paused");
-    };
+    const handleEnter = () => reelSection.classList.add("reel--paused");
+    const handleLeave = () => reelSection.classList.remove("reel--paused");
 
     if (window.matchMedia("(hover: hover)").matches) {
       reelSection.addEventListener("mouseenter", handleEnter);
@@ -33,7 +30,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
     };
   }, []);
 
-  // EFFECT 2: Controle de Playback dos Vídeos (Correção de travamento ao voltar página)
+  // EFFECT 2: Forçar reprodução e detectar o botão "Voltar" (bfcache)
   useEffect(() => {
     function tryPlayVideo(video: HTMLVideoElement) {
       if (!video) return;
@@ -45,8 +42,15 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
       
       const p = video.play();
       if (p !== undefined) {
-        p.catch((err) => {
-          console.log("Autoplay bloqueado temporariamente pelo navegador:", err);
+        p.catch(() => {
+          // Fallback: se o navegador bloquear, tenta dar play no primeiro clique/touch do usuário
+          const playOnInteraction = () => {
+            video.play();
+            document.removeEventListener("click", playOnInteraction);
+            document.removeEventListener("touchstart", playOnInteraction);
+          };
+          document.addEventListener("click", playOnInteraction, { once: true });
+          document.addEventListener("touchstart", playOnInteraction, { once: true });
         });
       }
     }
@@ -57,39 +61,33 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
       });
     }
 
-    // Monitora o carregamento de dados de cada vídeo individual
+    // Dá o play assim que cada vídeo carregar os primeiros dados
     document.querySelectorAll(".reel__slide video").forEach((v) => {
       const video = v as HTMLVideoElement;
       video.addEventListener("loadeddata", () => tryPlayVideo(video));
     });
 
-    // Executa o boot inicial
     bootReelVideos();
-    
-    // Gatilhos de segurança para interações manuais do usuário
-    const handleTouch = () => bootReelVideos();
-    const handleClick = () => bootReelVideos();
-    
-    // Força o play quando a aba volta a ficar ativa
-    const handleVisibility = () => { 
-      if (!document.hidden) {
-        bootReelVideos(); 
-      }
-    };
 
-    // Força o play quando o usuário clica no botão "Voltar" do navegador (bfcache)
+    // INTERCEPÇÃO DO BOTÃO VOLTAR (bfcache):
     const handlePageShow = (e: PageTransitionEvent) => {
-      bootReelVideos();
+      // Força o React a mudar a key, destruindo os vídeos velhos travados e criando novos limpos
+      setReelKey((prev) => prev + 1);
+      
+      // Executa o play logo em sequência
+      setTimeout(bootReelVideos, 50);
     };
 
-    document.addEventListener("touchstart", handleTouch, { passive: true, capture: true, once: true });
-    document.addEventListener("click", handleClick, { once: true });
-    document.addEventListener("visibilitychange", handleVisibility);
+    const handleVisibility = () => {
+      if (!document.hidden) bootReelVideos();
+    };
+
     window.addEventListener("pageshow", handlePageShow);
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibility);
       window.removeEventListener("pageshow", handlePageShow);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [videoUrls]);
 
@@ -134,8 +132,8 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             </div>
           </section>
 
-          {/* O container pai agora gerencia de forma limpa a animação via CSS */}
-          <section ref={sectionRef} className="reel" aria-label="Video previews">
+          {/* Adicionada a prop key={reelKey} para forçar o reset completo do HTML do carrossel */}
+          <section ref={sectionRef} className="reel" aria-label="Video previews" key={reelKey}>
             <div className="reel__viewport" dir="ltr">
               <div className="reel__track">
                 {allVideos.map((src, i) => (
