@@ -1,0 +1,393 @@
+/* app/product/[id]/product.module.css */
+
+.page {
+  min-height: 100vh;
+  background: #fce4f0;
+  padding-bottom: 60px;
+}
+
+/* ══════════════════════════════
+   HEADER
+══════════════════════════════ */
+.header {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.coverWrap {
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  background: #ddd;
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.avatarWrap {
+  position: absolute;
+  bottom: -48px;
+  left: 20px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid #e91e8c;
+  overflow: hidden;
+  background: #eee;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.headerInfo {
+  padding: 60px 20px 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.modelName {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: #111;
+  letter-spacing: -0.01em;
+}
+
+.verifiedBadge {
+  width: 24px;
+  height: 24px;
+  background: #2563eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.availableTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #16a34a;
+  letter-spacing: 0.06em;
+}
+
+.availableDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.seePlansBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  background: #e91e8c;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 150ms;
+  margin-bottom: 4px;
+}
+
+.seePlansBtn:hover {
+  background: #c71578;
+}
+
+/* ══════════════════════════════
+   GALLERY
+══════════════════════════════ */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 20px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.galleryItem {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: #ddd;
+}
+
+.galleryImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.galleryBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: #e91e8c;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ══════════════════════════════
+   PRICING
+══════════════════════════════ */
+.pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 16px 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.planCard {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.planHighlight {
+  border-color: #e91e8c;
+}
+
+/* "Most Popular" stamp */
+.popularBadge {
+  position: absolute;
+  top: -16px;
+  right: 20px;
+  background: #e91e8c;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.planName {
+  font-family: "Inter", sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #111;
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.planSubtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e91e8c;
+  margin-bottom: 8px;
+}
+
+.planDesc {
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* price box */
+.priceBox {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  background: #111;
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+}
+
+.priceBoxPink {
+  background: #e91e8c;
+}
+
+.price {
+  font-family: "Inter", sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.pricePer {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.planSection {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 12px;
+}
+
+.planList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  color: #222;
+}
+
+/* exclusive bonus block */
+.bonus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fce4f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.bonusIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.bonusLabel {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  color: #e91e8c;
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+
+.bonusText {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 16px 0;
+}
+
+.alsoLabel {
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  color: #e91e8c;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+/* buy button */
+.buyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  margin-top: 20px;
+  background: #111;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: opacity 150ms;
+}
+
+.buyBtn:hover {
+  opacity: 0.85;
+}
+
+.buyBtnPink {
+  background: #e91e8c;
+}
+
+/* ══════════════════════════════
+   DESKTOP
+══════════════════════════════ */
+@media (min-width: 900px) {
+  .coverWrap {
+    height: 360px;
+  }
+
+  .pricing {
+    flex-direction: row;
+    align-items: flex-start;
+    max-width: 1000px;
+    padding: 24px 24px 0;
+  }
+
+  .planCard {
+    flex: 1;
+  }
+
+  .gallery {
+    max-width: 800px;
+    padding: 24px 24px;
+  }
+
+  .headerInfo {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 24px 0;
+  }
+}
