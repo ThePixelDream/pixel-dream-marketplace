@@ -11,9 +11,9 @@
 
 /* ── HEADER ── */
 .header { 
-  margin-bottom: 12px;
+  margin-bottom: 0px; /* Reduzido a zero para colar na div de mídias abaixo */
   background: #fff;
-  padding-bottom: 14px;
+  padding-bottom: 10px; /* Encolhido para aproximar o botão da borda inferior */
   position: relative;
   z-index: 1;
 }
@@ -67,15 +67,17 @@
   background: #ccc; 
 }
 
+/* AJUSTE 1: Puxa o Nome da modelo bem mais para perto da Foto de Perfil */
 .headerInfo { 
-  padding: 38px 20px 0 !important; /* CORREÇÃO: Aproxima o Nome da Foto de Perfil eliminando o buraco branco */
+  padding: 34px 20px 0 !important; 
 }
 
+/* AJUSTE 2: Espaçamento reduzido abaixo do nome */
 .nameRow {
   display: inline-flex !important; 
   align-items: center !important; 
   gap: 8px !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 2px !important;
   flex-wrap: wrap !important;
 }
 
@@ -135,6 +137,7 @@
   margin-top: 8px; 
 }
 
+/* AJUSTE 3: Minimiza a distância entre as hashtags e o botão See Plans */
 .tagRow { 
   display: flex !important; 
   flex-wrap: wrap !important; 
@@ -164,11 +167,12 @@
   text-decoration: none; 
 }
 
-/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO ── */
+/* ── MÍDIAS: CARROSSEL COPIADO DO SEU HISTÓRICO PERFEITO ── */
 .mediaRow {
   width: 100% !important;
   overflow: hidden !important;
-  margin-top: -12px !important; /* CORREÇÃO: Cola a galeria perfeitamente embaixo do botão See plans */
+  /* AJUSTE 4: Margem negativa agressiva para colar o topo das imagens embaixo do botão See Plans */
+  margin-top: -14px !important; 
   margin-bottom: 16px !important;
 }
 
@@ -188,13 +192,14 @@
   animation-play-state: paused !important;
 }
 
+/* RETORNADO: Dimensões intocadas idênticas às do seu print de sucesso */
 .mediaItem {
-  flex: 0 0 62% !important; /* CORREÇÃO: Mantém a largura perfeita original sem dar zoom absurdo */
+  flex: 0 0 62% !important; 
   width: 62% !important;
   position: relative !important;
   border-radius: 18px !important;
   overflow: hidden !important;
-  aspect-ratio: 3 / 4 !important; /* Mantém a proporção vertical esticada correta */
+  aspect-ratio: 3 / 4 !important; 
   background: #eee !important;
   box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
 }
@@ -391,15 +396,15 @@
   text-decoration: none;
 }
 
-/* ── MEDIA QUERIES DETALHADOS (Garante o mesmo scroll e proporções no Desktop) ── */
+/* ── CONFIGURAÇÃO DE DESKTOP ADAPTADA PARA MANTER O SCROLL HORIZONTAL INFINITO ── */
 @media (min-width: 650px) {
   .mediaRow {
-    display: flex !important; /* Mantém a estrutura de carrossel contínuo horizontal no desktop */
+    display: flex !important; 
     overflow-x: hidden !important;
     margin-top: 12px !important;
   }
   .mediaItem {
-    flex: 0 0 240px !important; /* Largura fixa e estável para desktops */
+    flex: 0 0 240px !important; 
     width: 240px !important;
     aspect-ratio: 3 / 4 !important;
   }
@@ -410,7 +415,7 @@
   .coverWrap { aspect-ratio: 16 / 5; }
   .pricing { gap: 14px; }
   .mediaItem {
-    flex: 0 0 280px !important; /* Concede destaque proporcional em telas largas */
+    flex: 0 0 280px !important; 
     width: 280px !important;
   }
 }
