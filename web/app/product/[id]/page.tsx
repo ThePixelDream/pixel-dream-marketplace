@@ -50,8 +50,9 @@ export default async function ProductPage({ params }: { params: { id: string } }
     query = query.eq("slug", params.id);
   }
 
-  const { data: product } = await query.maybeSingle();
-  if (!product) notFound();
+  const { data: product, error } = await query.maybeSingle();
+console.log("product:", product, "error:", error, "id:", params.id);
+if (!product) notFound();
 
   const gallery: string[] = product.gallery_urls ?? [];
 
