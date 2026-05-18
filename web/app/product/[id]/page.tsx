@@ -65,12 +65,12 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       <div className={styles.header}>
         <div className={styles.coverWrap}>
           {product.cover_image_url
-            ? <img src={product.cover_image_url} alt={product.title} className={styles.cover} />
+            ? <img src={product.cover_image_url} alt={product.title} className={styles.cover} draggable="false" />
             : <div className={styles.coverPlaceholder} />
           }
           <div className={styles.avatarWrap}>
             {product.avatar_image_url
-              ? <img src={product.avatar_image_url} alt="" className={styles.avatar} />
+              ? <img src={product.avatar_image_url} alt="" className={styles.avatar} draggable="false" />
               : <div className={styles.avatarPlaceholder} />
             }
           </div>
@@ -107,7 +107,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* MEDIA — Carrossel de Mídias original e limpo */}
+      {/* MEDIA — Carrossel de Mídias original e protegido */}
       {(gallery.length > 0 || videoUrl) && (
         <div className={styles.mediaRow}>
           <div className={styles.mediaTrack}>
@@ -115,24 +115,50 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             {/* PRIMEIRA LEVA (Original) */}
             {gallery.map((url, i) => (
               <div key={`orig-img-${i}`} className={styles.mediaItem}>
-                <img src={url} alt="" className={styles.mediaImg} />
+                <img 
+                  src={url} 
+                  alt="" 
+                  className={styles.mediaImg} 
+                  draggable="false" 
+                />
               </div>
             ))}
             {videoUrl && (
               <div className={styles.mediaItem}>
-                <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
+                <video 
+                  src={videoUrl} 
+                  className={styles.mediaVideo} 
+                  muted 
+                  playsInline 
+                  loop 
+                  autoPlay 
+                  draggable="false"
+                />
               </div>
             )}
 
             {/* SEGUNDA LEVA (Cópia para o efeito de loop) */}
             {gallery.map((url, i) => (
               <div key={`dup-img-${i}`} className={`${styles.mediaItem} ${styles.mediaItemDup}`} aria-hidden="true">
-                <img src={url} alt="" className={styles.mediaImg} />
+                <img 
+                  src={url} 
+                  alt="" 
+                  className={styles.mediaImg} 
+                  draggable="false" 
+                />
               </div>
             ))}
             {videoUrl && (
               <div className={styles.mediaItem} aria-hidden="true">
-                <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
+                <video 
+                  src={videoUrl} 
+                  className={styles.mediaVideo} 
+                  muted 
+                  playsInline 
+                  loop 
+                  autoPlay 
+                  draggable="false"
+                />
               </div>
             )}
 
