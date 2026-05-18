@@ -31,9 +31,15 @@ const PLANS = [
 // Ícone de check reconfigurado para o box rosa quadrado com cantos arredondados da ref
 function CheckIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
+    <svg 
+      width="10" 
+      height="10" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      style={{ flexShrink: 0, marginTop: "2px", width: "10px", height: "10px" }}
+    >
       <rect width="24" height="24" rx="5" fill="#e91e8c" />
-      <path d="M6 12l4 4 8-8" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6 12l4 4 8-8" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
