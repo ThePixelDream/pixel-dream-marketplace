@@ -38,20 +38,21 @@ function CheckIcon({ pink = false }: { pink?: boolean }) {
   );
 }
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createSupabaseServerClient();
 
   // Try by UUID first, then by slug
   let query = supabase.from("products").select("*");
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id);
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
   if (isUuid) {
-    query = query.eq("id", params.id);
+    query = query.eq("id", id);
   } else {
-    query = query.eq("slug", params.id);
+    query = query.eq("slug", id);
   }
 
   const { data: product, error } = await query.maybeSingle();
-console.log("product:", product, "error:", error, "id:", params.id);
+console.log("product:", product, "error:", error, "id:", id);
 if (!product) notFound();
 
   const gallery: string[] = product.gallery_urls ?? [];
