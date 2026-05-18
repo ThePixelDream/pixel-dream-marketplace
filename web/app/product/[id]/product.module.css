@@ -167,17 +167,20 @@
   text-decoration: none; 
 }
 
-/* ── MÍDIAS: CARROSSEL INTERATIVO TOTAL ── */
+/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO INTERATIVO ── */
 .mediaRow {
   width: 100% !important;
+  
+  /* CORREÇÃO: Ativa o scroll nativo horizontal para mobile E desktop */
   overflow-x: auto !important; 
   -webkit-overflow-scrolling: touch !important; 
+  
   margin-top: 4px; 
   margin-bottom: 16px;
-  scrollbar-width: none; 
-  user-select: none; /* Impede seleção acidental de textos/imagens durante o arrasto */
+  scrollbar-width: none; /* Oculta barra no Firefox */
 }
 
+/* Oculta a barra de rolagem no Chrome e Safari */
 .mediaRow::-webkit-scrollbar {
   display: none !important;
 }
@@ -190,12 +193,14 @@
   padding: 8px 16px;
   width: max-content !important;
   min-width: max-content;
+  
+  /* Mantém a animação automática contínua de fundo */
   animation: mediaMarqueeAnimate 24000ms linear infinite !important;
   will-change: transform;
 }
 
-/* Pausa a animação apenas quando o utilizador está ativamente a clicar e arrastar */
-.mediaRow:active .mediaTrack {
+/* Pausa a rolagem automática quando o mouse está em cima no PC para o usuário poder navegar com o scroll */
+.mediaRow:hover .mediaTrack {
   animation-play-state: paused !important;
 }
 
@@ -215,7 +220,6 @@
   height: 100%;
   object-fit: cover; 
   display: block; 
-  pointer-events: none; /* Vital para o clique do rato não tentar arrastar o ficheiro da imagem */
 }
 
 @keyframes mediaMarqueeAnimate {
@@ -399,7 +403,7 @@
   text-decoration: none;
 }
 
-/* ── BREAKPOINTS DESKTOP ── */
+/* ── MEDIA QUERY DE DESKTOP ── */
 @media (min-width: 650px) {
   .mediaRow {
     margin-top: 12px !important;
