@@ -171,9 +171,20 @@
 /* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO (Mobile e Desktop) ── */
 .mediaRow {
   width: 100% !important;
-  overflow: hidden !important; /* Esconde o transbordo das mídias fora da tela */
-  margin-top: 4px; /* CORREÇÃO: Aproxima as mídias do botão 'See plans' */
+  
+  /* CORREÇÃO: Transforma a linha em um container de scroll manual pelo dedo */
+  overflow-x: auto !important; 
+  /* Garante que o scroll no iPhone/Safari seja absurdamente fluido e macio */
+  -webkit-overflow-scrolling: touch !important; 
+  
+  margin-top: 4px; 
   margin-bottom: 16px;
+  scrollbar-width: none; /* Oculta a barra de rolagem no Firefox */
+}
+
+/* Oculta a barra de rolagem no Chrome e Safari para manter o visual limpo */
+.mediaRow::-webkit-scrollbar {
+  display: none !important;
 }
 
 .mediaTrack {
