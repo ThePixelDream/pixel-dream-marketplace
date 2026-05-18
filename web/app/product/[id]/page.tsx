@@ -62,22 +62,24 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   return (
     <div className={styles.page}>
 
-      {/* HEADER */}
-      <div className={styles.header}>
+      {/* HEADER — Distâncias forçadas via inline style para blindar contra bugs do mobile */}
+      <div className={styles.header} style={{ marginBottom: "0px", paddingBottom: "10px" }}>
         <div className={styles.coverWrap}>
           {product.cover_image_url
             ? <img src={product.cover_image_url} alt={product.title} className={styles.cover} />
             : <div className={styles.coverPlaceholder} />
           }
-          <div className={styles.avatarWrap}>
+          <div className={styles.avatarWrap} style={{ bottom: "-32px", zIndex: 9999 }}>
             {product.avatar_image_url
               ? <img src={product.avatar_image_url} alt="" className={styles.avatar} />
               : <div className={styles.avatarPlaceholder} />
             }
           </div>
         </div>
-        <div className={styles.headerInfo}>
-          <div className={styles.nameRow}>
+        
+        {/* Puxa o nome da modelo para cima, diminuindo o espaço em branco da foto */}
+        <div className={styles.headerInfo} style={{ padding: "34px 20px 0" }}>
+          <div className={styles.nameRow} style={{ display: "inline-flex", marginBottom: "2px" }}>
             <span className={styles.modelName}>{product.title}</span>
             <span className={styles.verifiedBadge}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
@@ -92,13 +94,15 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             )}
             {product.sold && <span className={styles.soldTag}>SOLD</span>}
           </div>
+          
           {(product.tags ?? []).length > 0 && (
-            <div className={styles.tagRow}>
+            <div className={styles.tagRow} style={{ display: "flex", marginBottom: "8px" }}>
               {product.tags.map((t: string) => (
                 <span key={t} className={styles.tag}>#{t}</span>
               ))}
             </div>
           )}
+          
           {!product.sold && (
             <a href="#plans" className={styles.seePlansBtn}>See plans</a>
           )}
@@ -108,7 +112,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* MEDIA — gallery + video in one row */}
+      {/* MEDIA — Carrossel de Mídias com Autoplay Infinito */}
       {(gallery.length > 0 || videoUrl) && (
         <div className={styles.mediaRow}>
           <div className={styles.mediaTrack}>
@@ -125,7 +129,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               </div>
             )}
 
-            {/* SEGUNDA LEVA (Cópia para criar o efeito infinito visual) */}
+            {/* SEGUNDA LEVA (Cópia para o efeito de loop visual perfeito) */}
             {gallery.map((url, i) => (
               <div key={`dup-img-${i}`} className={`${styles.mediaItem} ${styles.mediaItemDup}`} aria-hidden="true">
                 <img src={url} alt="" className={styles.mediaImg} />
