@@ -28,7 +28,6 @@ const PLANS = [
   },
 ];
 
-// Ícone de check reconfigurado para o box rosa quadrado com cantos arredondados da ref
 function CheckIcon() {
   return (
     <svg 
@@ -62,24 +61,22 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   return (
     <div className={styles.page}>
 
-      {/* HEADER — Distâncias forçadas via inline style para blindar contra bugs do mobile */}
-      <div className={styles.header} style={{ marginBottom: "0px", paddingBottom: "10px" }}>
+      {/* HEADER */}
+      <div className={styles.header}>
         <div className={styles.coverWrap}>
           {product.cover_image_url
             ? <img src={product.cover_image_url} alt={product.title} className={styles.cover} />
             : <div className={styles.coverPlaceholder} />
           }
-          <div className={styles.avatarWrap} style={{ bottom: "-32px", zIndex: 9999 }}>
+          <div className={styles.avatarWrap}>
             {product.avatar_image_url
               ? <img src={product.avatar_image_url} alt="" className={styles.avatar} />
               : <div className={styles.avatarPlaceholder} />
             }
           </div>
         </div>
-        
-        {/* Puxa o nome da modelo para cima, diminuindo o espaço em branco da foto */}
-        <div className={styles.headerInfo} style={{ padding: "34px 20px 0" }}>
-          <div className={styles.nameRow} style={{ display: "inline-flex", marginBottom: "2px" }}>
+        <div className={styles.headerInfo}>
+          <div className={styles.nameRow}>
             <span className={styles.modelName}>{product.title}</span>
             <span className={styles.verifiedBadge}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
@@ -94,15 +91,13 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             )}
             {product.sold && <span className={styles.soldTag}>SOLD</span>}
           </div>
-          
           {(product.tags ?? []).length > 0 && (
-            <div className={styles.tagRow} style={{ display: "flex", marginBottom: "8px" }}>
+            <div className={styles.tagRow}>
               {product.tags.map((t: string) => (
                 <span key={t} className={styles.tag}>#{t}</span>
               ))}
             </div>
           )}
-          
           {!product.sold && (
             <a href="#plans" className={styles.seePlansBtn}>See plans</a>
           )}
