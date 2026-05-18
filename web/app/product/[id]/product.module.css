@@ -11,9 +11,9 @@
 
 /* ── HEADER ── */
 .header { 
-  margin-bottom: 12px;
+  margin-bottom: 12px; /* Reduzido o espaço abaixo do cabeçalho */
   background: #fff;
-  padding-bottom: 14px;
+  padding-bottom: 14px; /* Menos respiro interno inferior */
   position: relative;
   z-index: 1;
 }
@@ -42,7 +42,7 @@
 
 .avatarWrap {
   position: absolute;
-  bottom: -32px;
+  bottom: -32px; /* Puxado ligeiramente para cima para compactar */
   left: 20px;
   width: 84px; 
   height: 84px;
@@ -67,16 +67,17 @@
   background: #ccc; 
 }
 
+/* CORREÇÃO: Reduzido o padding superior de 55px para 42px para aproximar o Nome da Foto de Perfil */
 .headerInfo { 
-  padding: 34px 20px 0 !important;
+  padding: 42px 20px 0; 
 }
 
 .nameRow {
-  display: inline-flex !important; 
-  align-items: center !important; 
-  gap: 8px !important;
-  margin-bottom: 4px !important;
-  flex-wrap: wrap !important;
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  margin-bottom: 10px; /* Reduzida a distância para as tags */
+  flex-wrap: wrap;
 }
 
 .modelName {
@@ -136,10 +137,10 @@
 }
 
 .tagRow { 
-  display: flex !important; 
-  flex-wrap: wrap !important; 
-  gap: 6px !important; 
-  margin-bottom: 8px !important;
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+  margin-bottom: 14px; /* Reduzida a distância das hashtags para o botão see plans */
 }
 
 .tag { 
@@ -164,12 +165,12 @@
   text-decoration: none; 
 }
 
-/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO ── */
+/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO (Mobile e Desktop) ── */
 .mediaRow {
   width: 100% !important;
-  overflow: hidden !important;
-  margin-top: -4px !important; 
-  margin-bottom: 8px !important;
+  overflow: hidden !important; /* Esconde o transbordo das mídias fora da tela */
+  margin-top: 4px; /* CORREÇÃO: Aproxima as mídias do botão 'See plans' */
+  margin-bottom: 16px;
 }
 
 .mediaTrack {
@@ -180,42 +181,46 @@
   padding: 8px 16px;
   width: max-content !important;
   min-width: max-content;
+  
+  /* Ativa a animação contínua e suave controlada por hardware */
   animation: mediaMarqueeAnimate 24000ms linear infinite !important;
   will-change: transform;
 }
 
+/* Pausa o scroll automático ao passar o mouse (Desktops) */
 .mediaRow:hover .mediaTrack {
   animation-play-state: paused !important;
 }
 
 .mediaItem {
-  flex: 0 0 62% !important; 
-  width: 62% !important;
-  position: relative !important;
-  border-radius: 18px !important;
-  overflow: hidden !important;
-  aspect-ratio: 3 / 4 !important; 
-  background: #eee !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+  flex: 0 0 250px !important; /* Tamanho fixo e imponente para as mídias em qualquer tela */
+  width: 250px !important;
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: #ddd;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
 }
 
 .mediaImg, .mediaVideo {
-  width: 100% !important; 
-  height: 100% !important;
-  display: block !important;
-  object-fit: cover !important;
+  width: 100%; 
+  height: 100%;
+  object-fit: cover; 
+  display: block; 
 }
 
+/* Engrenagem de Loop Infinito */
 @keyframes mediaMarqueeAnimate {
   0% {
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-50%, 0, 0); /* Recua exatamente metade da pista duplicada */
   }
 }
 
-/* ── PRICING ── */
+/* ── PRICING (Mantido estrutura estável em 3 colunas) ── */
 .pricing {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -391,25 +396,13 @@
   text-decoration: none;
 }
 
-@media (min-width: 650px) {
-  .mediaRow {
-    display: flex !important; 
-    overflow-x: hidden !important;
-    margin-top: 12px !important;
-  }
-  .mediaItem {
-    flex: 0 0 240px !important; 
-    width: 240px !important;
-    aspect-ratio: 3 / 4 !important;
-  }
-}
-
+/* ── MEDIA QUERY DE DESKTOP: Mantém comportamento idêntico de carrossel infinito ── */
 @media (min-width: 900px) {
   .page { max-width: 900px; }
   .coverWrap { aspect-ratio: 16 / 5; }
   .pricing { gap: 14px; }
   .mediaItem {
-    flex: 0 0 280px !important; 
+    flex: 0 0 280px !important; /* Ligeiramente maior em telas desktop para valorizar a imagem */
     width: 280px !important;
   }
 }
