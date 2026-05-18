@@ -14,9 +14,9 @@
 
 /* ── HEADER ── */
 .header { 
-  margin-bottom: 12px; /* Reduzido o espaço abaixo do cabeçalho */
+  margin-bottom: 12px; 
   background: #fff;
-  padding-bottom: 14px; /* Menos respiro interno inferior */
+  padding-bottom: 14px; 
   position: relative;
   z-index: 1;
 }
@@ -45,7 +45,7 @@
 
 .avatarWrap {
   position: absolute;
-  bottom: -32px; /* Puxado ligeiramente para cima para compactar */
+  bottom: -32px; 
   left: 20px;
   width: 84px; 
   height: 84px;
@@ -70,7 +70,6 @@
   background: #ccc; 
 }
 
-/* CORREÇÃO: Reduzido o padding superior de 55px para 42px para aproximar o Nome da Foto de Perfil */
 .headerInfo { 
   padding: 42px 20px 0; 
 }
@@ -79,7 +78,7 @@
   display: flex; 
   align-items: center; 
   gap: 10px;
-  margin-bottom: 10px; /* Reduzida a distância para as tags */
+  margin-bottom: 10px; 
   flex-wrap: wrap;
 }
 
@@ -143,7 +142,7 @@
   display: flex; 
   flex-wrap: wrap; 
   gap: 8px; 
-  margin-bottom: 14px; /* Reduzida a distância das hashtags para o botão see plans */
+  margin-bottom: 14px; 
 }
 
 .tag { 
@@ -168,21 +167,17 @@
   text-decoration: none; 
 }
 
-/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO (Mobile e Desktop) ── */
+/* ── MÍDIAS: CARROSSEL INTERATIVO TOTAL ── */
 .mediaRow {
   width: 100% !important;
-  
-  /* CORREÇÃO: Transforma a linha em um container de scroll manual pelo dedo */
   overflow-x: auto !important; 
-  /* Garante que o scroll no iPhone/Safari seja absurdamente fluido e macio */
   -webkit-overflow-scrolling: touch !important; 
-  
   margin-top: 4px; 
   margin-bottom: 16px;
-  scrollbar-width: none; /* Oculta a barra de rolagem no Firefox */
+  scrollbar-width: none; 
+  user-select: none; /* Impede seleção acidental de textos/imagens durante o arrasto */
 }
 
-/* Oculta a barra de rolagem no Chrome e Safari para manter o visual limpo */
 .mediaRow::-webkit-scrollbar {
   display: none !important;
 }
@@ -195,19 +190,17 @@
   padding: 8px 16px;
   width: max-content !important;
   min-width: max-content;
-  
-  /* Ativa a animação contínua e suave controlada por hardware */
   animation: mediaMarqueeAnimate 24000ms linear infinite !important;
   will-change: transform;
 }
 
-/* Pausa o scroll automático ao passar o mouse (Desktops) */
-.mediaRow:hover .mediaTrack {
+/* Pausa a animação apenas quando o utilizador está ativamente a clicar e arrastar */
+.mediaRow:active .mediaTrack {
   animation-play-state: paused !important;
 }
 
 .mediaItem {
-  flex: 0 0 250px !important; /* Tamanho fixo e imponente para as mídias em qualquer tela */
+  flex: 0 0 250px !important; 
   width: 250px !important;
   position: relative;
   border-radius: 18px;
@@ -222,19 +215,15 @@
   height: 100%;
   object-fit: cover; 
   display: block; 
+  pointer-events: none; /* Vital para o clique do rato não tentar arrastar o ficheiro da imagem */
 }
 
-/* Engrenagem de Loop Infinito */
 @keyframes mediaMarqueeAnimate {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0); /* Recua exatamente metade da pista duplicada */
-  }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
-/* ── PRICING (Mantido estrutura estável em 3 colunas) ── */
+/* ── PRICING ── */
 .pricing {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -410,11 +399,9 @@
   text-decoration: none;
 }
 
-/* ── MEDIA QUERY DE DESKTOP: Mantém comportamento idêntico de carrossel infinito ── */
+/* ── BREAKPOINTS DESKTOP ── */
 @media (min-width: 650px) {
   .mediaRow {
-    display: flex !important; 
-    overflow-x: auto !important; /* Mantém o sistema de rolagem ativo no PC para o clique responder */
     margin-top: 12px !important;
   }
   .mediaItem {
