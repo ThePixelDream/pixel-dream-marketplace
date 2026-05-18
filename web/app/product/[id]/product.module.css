@@ -4,181 +4,98 @@
   min-height: 100vh;
   background: #fce4f0;
   padding-bottom: 60px;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
-/* ══════════════════════════════
-   HEADER
-══════════════════════════════ */
-.header {
-  margin-bottom: 24px;
-}
+/* ── HEADER ── */
+.header { margin-bottom: 16px; }
 
 .coverWrap {
   position: relative;
   width: 100%;
-  height: 260px;
+  aspect-ratio: 16 / 7;
   overflow: hidden;
   background: #ddd;
 }
 
 .cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top center; display: block;
 }
 
-.coverPlaceholder {
-  width: 100%;
-  height: 100%;
-  background: #ddd;
-}
+.coverPlaceholder { width: 100%; height: 100%; background: #ddd; }
 
-/* Avatar sits on top of cover, bottom-left */
 .avatarWrap {
   position: absolute;
-  bottom: -44px;
-  left: 20px;
-  width: 88px;
-  height: 88px;
+  bottom: -42px; left: 16px;
+  width: 84px; height: 84px;
   border-radius: 50%;
   border: 3px solid #e91e8c;
   overflow: hidden;
   background: #eee;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
   z-index: 10;
 }
 
-.avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+.avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatarPlaceholder { width: 100%; height: 100%; background: #ccc; }
 
-.avatarPlaceholder {
-  width: 100%;
-  height: 100%;
-  background: #ccc;
-}
-
-/* Info block below cover — padding-top makes room for avatar */
-.headerInfo {
-  padding: 52px 20px 0;
-}
+.headerInfo { padding: 50px 16px 0; }
 
 .nameRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px; flex-wrap: wrap;
 }
 
 .modelName {
   font-family: "Inter", sans-serif;
-  font-size: 20px;
-  font-weight: 900;
-  color: #111;
-  letter-spacing: -0.01em;
+  font-size: 20px; font-weight: 900; color: #111; letter-spacing: -0.01em;
 }
 
 .verifiedBadge {
-  width: 24px;
-  height: 24px;
-  background: #2563eb;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  width: 22px; height: 22px; background: #2563eb; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
 .availableTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+  display: inline-flex; align-items: center; gap: 5px;
   font-family: "Inter", sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: #16a34a;
-  letter-spacing: 0.06em;
+  font-size: 11px; font-weight: 700; color: #16a34a; letter-spacing: 0.06em;
 }
 
-.availableDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #16a34a;
-}
+.availableDot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; }
 
 .soldTag {
-  display: inline-flex;
-  align-items: center;
+  display: inline-flex; align-items: center;
   font-family: "Inter", sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: #dc2626;
-  letter-spacing: 0.06em;
-  background: #fee2e2;
-  padding: 3px 10px;
-  border-radius: 999px;
+  font-size: 11px; font-weight: 700; color: #dc2626;
+  background: #fee2e2; padding: 3px 10px; border-radius: 999px;
 }
 
-.soldMsg {
-  font-family: "Inter", sans-serif;
-  font-size: 15px;
-  color: #555;
-  margin-top: 8px;
-}
+.soldMsg { font-family: "Inter", sans-serif; font-size: 15px; color: #555; margin-top: 8px; }
 
-.tagRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 14px;
-}
-
-.tag {
-  font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  color: #e91e8c;
-}
+.tagRow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.tag { font-family: "Inter", sans-serif; font-size: 12px; font-weight: 600; color: #e91e8c; }
 
 .seePlansBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 52px;
-  background: #e91e8c;
-  color: #fff;
-  font-family: "Inter", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 999px;
-  text-decoration: none;
-  transition: background 150ms;
-  margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 50px;
+  background: #e91e8c; color: #fff;
+  font-family: "Inter", sans-serif; font-size: 16px; font-weight: 700;
+  border-radius: 999px; text-decoration: none; transition: background 150ms;
 }
-
 .seePlansBtn:hover { background: #c71578; }
 
-/* ══════════════════════════════
-   GALLERY
-══════════════════════════════ */
-.gallery {
+/* ── MEDIA (gallery + video in one row) ── */
+.mediaRow {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 20px 16px;
-  max-width: 600px;
-  margin: 0 auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 16px;
 }
 
-.galleryItem {
+.mediaItem {
   position: relative;
   border-radius: 14px;
   overflow: hidden;
@@ -186,249 +103,129 @@
   background: #ddd;
 }
 
-.galleryImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.mediaImg, .mediaVideo {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block; border-radius: 14px;
 }
 
-.galleryBadge {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 24px;
-  height: 24px;
-  background: #e91e8c;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.mediaBadge {
+  position: absolute; bottom: 8px; right: 8px;
+  width: 22px; height: 22px;
+  background: #e91e8c; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* ══════════════════════════════
-   VIDEO
-══════════════════════════════ */
-.videoWrap {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 16px 20px;
-}
-
-.video {
-  width: 100%;
-  border-radius: 14px;
-  display: block;
-}
-
-/* ══════════════════════════════
-   PRICING
-══════════════════════════════ */
+/* ── PRICING (always 3 columns) ── */
 .pricing {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   padding: 8px 16px 0;
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 .planCard {
-  background: #fff;
-  border-radius: 20px;
-  padding: 24px 20px;
-  position: relative;
+  background: #fff; border-radius: 16px;
+  padding: 16px 12px; position: relative;
   border: 2px solid transparent;
 }
 
 .planHighlight { border-color: #e91e8c; }
 
 .popularBadge {
-  position: absolute;
-  top: -16px;
-  right: 20px;
-  background: #e91e8c;
-  color: #fff;
+  position: absolute; top: -14px; right: 10px;
+  background: #e91e8c; color: #fff;
   font-family: "Inter", sans-serif;
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-align: center;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  line-height: 1.2;
+  font-size: 7px; font-weight: 800; letter-spacing: 0.04em;
+  text-align: center; border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 1px; line-height: 1.2;
 }
 
 .planName {
   font-family: "Inter", sans-serif;
-  font-size: 22px;
-  font-weight: 900;
-  color: #111;
-  letter-spacing: -0.01em;
-  margin-bottom: 2px;
+  font-size: 14px; font-weight: 900; color: #111;
+  letter-spacing: -0.01em; margin-bottom: 2px;
 }
 
 .planSubtitle {
   font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #e91e8c;
-  margin-bottom: 8px;
+  font-size: 10px; font-weight: 600; color: #e91e8c; margin-bottom: 8px;
 }
 
-.planDesc {
-  font-family: "Inter", sans-serif;
-  font-size: 13.5px;
-  color: #555;
-  line-height: 1.5;
-  margin-bottom: 16px;
-}
+.planDesc { display: none; } /* hidden on mobile to save space */
 
 .priceBox {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  background: #111;
-  border-radius: 12px;
-  padding: 12px 18px;
-  margin-bottom: 20px;
+  display: flex; align-items: baseline; gap: 4px;
+  background: #111; border-radius: 10px;
+  padding: 8px 10px; margin-bottom: 12px;
 }
-
 .priceBoxPink { background: #e91e8c; }
 
 .price {
   font-family: "Inter", sans-serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.02em;
+  font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -0.02em;
 }
 
 .pricePer {
   font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.75);
 }
 
 .planSection {
   font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: #111;
-  margin-bottom: 12px;
+  font-size: 10px; font-weight: 700; color: #111; margin-bottom: 8px;
 }
 
 .planList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  list-style: none; padding: 0; margin: 0 0 10px;
+  display: flex; flex-direction: column; gap: 5px;
 }
 
 .planItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: "Inter", sans-serif;
-  font-size: 13.5px;
-  color: #222;
+  display: flex; align-items: flex-start; gap: 6px;
+  font-family: "Inter", sans-serif; font-size: 10px; color: #222; line-height: 1.3;
 }
 
 .bonus {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #fce4f0;
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 6px;
+  background: #fce4f0; border-radius: 8px;
+  padding: 8px 8px; margin-bottom: 10px;
 }
-
-.bonusIcon { font-size: 22px; flex-shrink: 0; }
-
+.bonusIcon { font-size: 14px; flex-shrink: 0; }
 .bonusLabel {
   font-family: "Inter", sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  color: #e91e8c;
-  letter-spacing: 0.08em;
-  margin-bottom: 2px;
+  font-size: 7px; font-weight: 800; color: #e91e8c; letter-spacing: 0.06em; margin-bottom: 1px;
 }
+.bonusText { font-family: "Inter", sans-serif; font-size: 9px; font-weight: 600; color: #111; }
 
-.bonusText {
-  font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #111;
-}
-
-.divider {
-  border: none;
-  border-top: 1px solid #f0f0f0;
-  margin: 16px 0;
-}
+.divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
 
 .alsoLabel {
   font-family: "Inter", sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  color: #e91e8c;
-  letter-spacing: 0.1em;
-  margin-bottom: 10px;
+  font-size: 7px; font-weight: 800; color: #e91e8c; letter-spacing: 0.08em; margin-bottom: 6px;
 }
 
 .buyBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 48px;
-  margin-top: 20px;
-  background: #111;
-  color: #fff;
-  font-family: "Inter", sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  border-radius: 999px;
-  text-decoration: none;
-  transition: opacity 150ms;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 36px; margin-top: 12px;
+  background: #111; color: #fff;
+  font-family: "Inter", sans-serif; font-size: 11px; font-weight: 700;
+  border-radius: 999px; text-decoration: none; transition: opacity 150ms;
 }
-
 .buyBtn:hover { opacity: 0.85; }
 .buyBtnPink { background: #e91e8c; }
 
-/* ══════════════════════════════
-   DESKTOP
-══════════════════════════════ */
+/* ── DESKTOP ── */
 @media (min-width: 900px) {
-  .coverWrap { height: 360px; }
-
-  .pricing {
-    flex-direction: row;
-    align-items: flex-start;
-    max-width: 1000px;
-    padding: 24px 24px 0;
-  }
-
-  .planCard { flex: 1; }
-
-  .gallery {
-    max-width: 800px;
-    padding: 24px;
-  }
-
-  .headerInfo {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 52px 24px 0;
-  }
+  .page { max-width: 900px; }
+  .coverWrap { aspect-ratio: 16 / 5; }
+  .planName { font-size: 18px; }
+  .planDesc { display: block; font-family: "Inter", sans-serif; font-size: 11px; color: #555; line-height: 1.4; margin-bottom: 10px; }
+  .price { font-size: 24px; }
+  .planItem { font-size: 12px; }
+  .buyBtn { height: 42px; font-size: 13px; }
+  .mediaRow { padding: 20px 24px; gap: 12px; }
+  .pricing { padding: 8px 24px 0; gap: 14px; }
 }
