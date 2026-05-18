@@ -107,15 +107,43 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* MEDIA — Carrossel de Mídias com Autoplay Infinito */}
+      {/* MEDIA — Carrossel de Mídias Interativo no Mobile e Desktop */}
       {(gallery.length > 0 || videoUrl) && (
-        <div className={styles.mediaRow}>
+        <div 
+          className={styles.mediaRow}
+          onMouseDown={(e) => {
+            const el = e.currentTarget;
+            el.dataset.isDown = "true";
+            el.dataset.startX = String(e.pageX - el.offsetLeft);
+            el.dataset.scrollLeft = String(el.scrollLeft);
+            el.style.cursor = "grabbing";
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget;
+            el.dataset.isDown = "false";
+            el.style.cursor = "grab";
+          }}
+          onMouseUp={(e) => {
+            const el = e.currentTarget;
+            el.dataset.isDown = "false";
+            el.style.cursor = "grab";
+          }}
+          onMouseMove={(e) => {
+            const el = e.currentTarget;
+            if (el.dataset.isDown !== "true") return;
+            e.preventDefault();
+            const x = e.pageX - el.offsetLeft;
+            const walk = (x - Number(el.dataset.startX || 0)) * 1.5; // Ajusta a velocidade do arrasto
+            el.scrollLeft = Number(el.dataset.scrollLeft || 0) - walk;
+          }}
+          style={{ cursor: "grab" }}
+        >
           <div className={styles.mediaTrack}>
             
             {/* PRIMEIRA LEVA (Original) */}
             {gallery.map((url, i) => (
               <div key={`orig-img-${i}`} className={styles.mediaItem}>
-                <img src={url} alt="" className={styles.mediaImg} />
+                <img src={url} alt="" className={styles.mediaImg} draggable="false" />
               </div>
             ))}
             {videoUrl && (
@@ -124,10 +152,10 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               </div>
             )}
 
-            {/* SEGUNDA LEVA (Cópia para o efeito de loop visual perfeito) */}
+            {/* SEGUNDA LEVA (Cópia para o efeito de loop) */}
             {gallery.map((url, i) => (
               <div key={`dup-img-${i}`} className={`${styles.mediaItem} ${styles.mediaItemDup}`} aria-hidden="true">
-                <img src={url} alt="" className={styles.mediaImg} />
+                <img src={url} alt="" className={styles.mediaImg} draggable="false" />
               </div>
             ))}
             {videoUrl && (
