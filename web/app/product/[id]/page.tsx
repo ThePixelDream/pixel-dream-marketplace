@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import styles from "./product.module.css";
+import { MediaCarousel } from "./MediaCarousel";
 
 export const dynamic = "force-dynamic";
 
@@ -107,66 +108,8 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* MEDIA — Carrossel de Mídias Interativo no Mobile e Desktop */}
-      {(gallery.length > 0 || videoUrl) && (
-        <div 
-          className={styles.mediaRow}
-          onMouseDown={(e) => {
-            const el = e.currentTarget;
-            el.dataset.isDown = "true";
-            el.dataset.startX = String(e.pageX - el.offsetLeft);
-            el.dataset.scrollLeft = String(el.scrollLeft);
-            el.style.cursor = "grabbing";
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget;
-            el.dataset.isDown = "false";
-            el.style.cursor = "grab";
-          }}
-          onMouseUp={(e) => {
-            const el = e.currentTarget;
-            el.dataset.isDown = "false";
-            el.style.cursor = "grab";
-          }}
-          onMouseMove={(e) => {
-            const el = e.currentTarget;
-            if (el.dataset.isDown !== "true") return;
-            e.preventDefault();
-            const x = e.pageX - el.offsetLeft;
-            const walk = (x - Number(el.dataset.startX || 0)) * 1.5; // Ajusta a velocidade do arrasto
-            el.scrollLeft = Number(el.dataset.scrollLeft || 0) - walk;
-          }}
-          style={{ cursor: "grab" }}
-        >
-          <div className={styles.mediaTrack}>
-            
-            {/* PRIMEIRA LEVA (Original) */}
-            {gallery.map((url, i) => (
-              <div key={`orig-img-${i}`} className={styles.mediaItem}>
-                <img src={url} alt="" className={styles.mediaImg} draggable="false" />
-              </div>
-            ))}
-            {videoUrl && (
-              <div className={styles.mediaItem}>
-                <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
-              </div>
-            )}
-
-            {/* SEGUNDA LEVA (Cópia para o efeito de loop) */}
-            {gallery.map((url, i) => (
-              <div key={`dup-img-${i}`} className={`${styles.mediaItem} ${styles.mediaItemDup}`} aria-hidden="true">
-                <img src={url} alt="" className={styles.mediaImg} draggable="false" />
-              </div>
-            ))}
-            {videoUrl && (
-              <div className={styles.mediaItem} aria-hidden="true">
-                <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
-              </div>
-            )}
-
-          </div>
-        </div>
-      )}
+      {/* MEDIA — Carrossel isolado de Cliente para suportar Touch e Mouse Drag em segurança */}
+      <MediaCarousel gallery={gallery} videoUrl={videoUrl} styles={styles} />
 
       {/* PRICING */}
       {!product.sold && (
@@ -186,7 +129,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 <p className={styles.planDesc}>{plan.description}</p>
                 <div className={styles.priceBox}>
                   <span className={styles.price}>${(price / 100).toFixed(0)}</span>
-                  <span className={styles.pricePer}>/one-time</span>
+                  <span className={styles.pricePer}/one-time</span>
                 </div>
                 
                 <ul className={styles.planList}>
