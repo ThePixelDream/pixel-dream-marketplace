@@ -1,5 +1,4 @@
 // web/app/product/[id]/page.tsx
-// [id] accepts both UUID and slug (e.g. "asian010")
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
@@ -31,7 +30,7 @@ const PLANS = [
 
 function CheckIcon({ pink = false }: { pink?: boolean }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
       <rect width="24" height="24" rx="4" fill={pink ? "#e91e8c" : "#111"} />
       <path d="M6 12l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -42,25 +41,21 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
 
-  // Try by UUID first, then by slug
-  let query = supabase.from("products").select("*");
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-  if (isUuid) {
-    query = query.eq("id", id);
-  } else {
-    query = query.eq("slug", id);
-  }
+  const { data: product } = await supabase
+    .from("products").select("*")
+    .eq(isUuid ? "id" : "slug", id)
+    .maybeSingle();
 
-  const { data: product, error } = await query.maybeSingle();
-console.log("product:", product, "error:", error, "id:", id);
-if (!product) notFound();
+  if (!product) notFound();
 
   const gallery: string[] = product.gallery_urls ?? [];
+  const videoUrl: string = product.video_url ?? "";
 
   return (
     <div className={styles.page}>
 
-            {/* HEADER */}
+      {/* HEADER */}
       <div className={styles.header}>
         <div className={styles.coverWrap}>
           {product.cover_image_url
@@ -106,26 +101,29 @@ if (!product) notFound();
         </div>
       </div>
 
-      {/* GALLERY */}
-      {gallery.length > 0 && (
-        <div className={styles.gallery}>
+      {/* MEDIA — gallery + video in one row */}
+      {(gallery.length > 0 || videoUrl) && (
+        <div className={styles.mediaRow}>
           {gallery.map((url, i) => (
-            <div key={i} className={styles.galleryItem}>
-              <img src={url} alt="" className={styles.galleryImg} />
-              <div className={styles.galleryBadge}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+            <div key={i} className={styles.mediaItem}>
+              <img src={url} alt="" className={styles.mediaImg} />
+              <div className={styles.mediaBadge}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="white">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
                 </svg>
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* VIDEO */}
-      {product.video_url && (
-        <div className={styles.videoWrap}>
-          <video src={product.video_url} controls muted playsInline className={styles.video} />
+          {videoUrl && (
+            <div className={styles.mediaItem}>
+              <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
+              <div className={styles.mediaBadge}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="white">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
