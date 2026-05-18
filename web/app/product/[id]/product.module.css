@@ -1,258 +1,53 @@
-/* app/product/[id]/product.module.css */
-
-.page {
-  min-height: 100vh;
-  background: #fff5f8; /* Tom sutil e limpo de fundo da referência */
-  padding-bottom: 60px;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-/* ── HEADER ── */
-.header { 
-  margin-bottom: 16px; 
-  background: #fff;
-  padding-bottom: 20px;
-}
-
-.coverWrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 7;
-  overflow: hidden;
-  background: #eee;
-}
-
-.cover {
-  width: 100%; 
-  height: 100%;
-  object-fit: cover; 
-  object-position: center center; 
-  display: block;
-}
-
-.coverPlaceholder { 
-  width: 100%; 
-  height: 100%; 
-  background: #ddd; 
-}
-
-.avatarWrap {
-  position: absolute;
-  bottom: -40px; 
-  left: 20px;
-  width: 90px; 
-  height: 90px;
-  border-radius: 50%;
-  border: 4px solid #fff; /* Borda branca idêntica à referência */
-  overflow: hidden;
-  background: #eee;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-  z-index: 10;
-}
-
-.avatar { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
-  display: block; 
-}
-
-.avatarPlaceholder { 
-  width: 100%; 
-  height: 100%; 
-  background: #ccc; 
-}
-
-.headerInfo { 
-  padding: 55px 20px 0; 
-}
-
-.nameRow {
-  display: flex; 
-  align-items: center; 
-  gap: 10px;
-  margin-bottom: 16px; 
-  flex-wrap: wrap;
-}
-
-.modelName {
-  font-family: "Inter", sans-serif;
-  font-size: 24px; 
-  font-weight: 800; 
-  color: #1a1a1a; 
-  letter-spacing: -0.02em;
-}
-
-.verifiedBadge {
-  width: 20px; 
-  height: 20px; 
-  background: #e91e8c; 
-  border-radius: 50%;
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  flex-shrink: 0;
-}
-
-.availableTag {
-  display: inline-flex; 
-  align-items: center; 
-  gap: 6px;
-  font-family: "Inter", sans-serif;
-  font-size: 11px; 
-  font-weight: 700; 
-  color: #e91e8c; 
-  letter-spacing: 0.05em;
-}
-
-.availableDot { 
-  width: 8px; 
-  height: 8px; 
-  border-radius: 50%; 
-  background: #10b981; 
-}
-
-.soldTag {
-  display: inline-flex; 
-  align-items: center;
-  font-family: "Inter", sans-serif;
-  font-size: 11px; 
-  font-weight: 700; 
-  color: #dc2626;
-  background: #fee2e2; 
-  padding: 4px 12px; 
-  border-radius: 999px;
-}
-
-.soldMsg { 
-  font-family: "Inter", sans-serif; 
-  font-size: 15px; 
-  color: #666; 
-  margin-top: 8px; 
-}
-
-.tagRow { 
-  display: flex; 
-  flex-wrap: wrap; 
-  gap: 8px; 
-  margin-bottom: 16px; 
-}
-
-.tag { 
-  font-family: "Inter", sans-serif; 
-  font-size: 13px; 
-  font-weight: 600; 
-  color: #e91e8c; 
-}
-
-.seePlansBtn {
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  width: 100%; 
-  height: 48px;
-  background: #e91e8c; 
-  color: #fff;
-  font-family: "Inter", sans-serif; 
-  font-size: 16px; 
-  font-weight: 700;
-  border-radius: 999px; 
-  text-decoration: none; 
-  transition: opacity 150ms;
-}
-
-.seePlansBtn:hover { 
-  opacity: 0.9; 
-}
-
-/* ── CORREÇÃO DA MÍDIA (Ajustado para bater com as 3 colunas da referência) ── */
-.mediaRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* CORRIGIDO: 3 colunas perfeitas */
-  gap: 12px;
-  padding: 16px;
-}
-
-.mediaItem {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  aspect-ratio: 3 / 4;
-  background: #ddd;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.mediaImg, .mediaVideo {
-  width: 100%; 
-  height: 100%;
-  object-fit: cover; 
-  display: block; 
-  border-radius: 16px;
-}
-
-.mediaBadge {
-  position: absolute; 
-  bottom: 10px; 
-  right: 10px;
-  width: 22px; 
-  height: 22px;
-  background: #e91e8c; 
-  border-radius: 50%;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  border: 1.5px solid #fff;
-}
-
-/* ── PRICING (Sincronizado com os cards de planos da referência) ── */
+/* ── PRICING (Sempre em 3 colunas paralelas, como na referência) ── */
 .pricing {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  padding: 8px 16px 32px;
+  grid-template-columns: repeat(3, 1fr) !important; /* Força 3 colunas em qualquer tela */
+  gap: 8px; /* Espaço reduzido para dar mais área útil aos cards */
+  padding: 12px 12px 32px;
 }
 
 .planCard {
   background: #fff; 
-  border-radius: 20px;
-  padding: 20px 14px; 
+  border-radius: 16px;
+  padding: 14px 10px; /* Padding reduzido para os textos não esmagarem */
   position: relative;
-  border: 1.5px solid #f0f0f0;
+  border: 1.5px solid #f2f2f2;
   display: flex;
   flex-direction: column;
+  min-width: 0; /* IMPEDE o card de estourar a largura do grid */
 }
 
 .planHighlight { 
   border-color: #e91e8c; 
-  box-shadow: 0 8px 24px rgba(233, 30, 140, 0.1);
+  box-shadow: 0 4px 20px rgba(233, 30, 140, 0.08);
 }
 
+/* Ajuste do Badge do selo "Most Popular" para não sumir no topo */
 .popularBadge {
   position: absolute; 
-  top: -18px; 
-  right: 14px;
+  top: -14px; 
+  right: 6px;
   background: #e91e8c; 
   color: #fff;
   font-family: "Inter", sans-serif;
-  font-size: 8px; 
-  font-weight: 800; 
+  font-size: 6px; 
+  font-weight: 900; 
   letter-spacing: 0.02em;
   text-align: center; 
   border-radius: 50%;
-  width: 46px; 
-  height: 46px;
+  width: 38px; 
+  height: 38px;
   display: flex; 
   flex-direction: column;
   align-items: center; 
   justify-content: center;
   line-height: 1.1;
-  box-shadow: 0 4px 10px rgba(233, 30, 140, 0.3);
+  z-index: 5;
 }
 
 .planName {
   font-family: "Inter", sans-serif;
-  font-size: 18px; 
+  font-size: 14px; /* Tamanho reduzido para caber o nome inteiro sempre */
   font-weight: 800; 
   color: #111;
   letter-spacing: -0.01em; 
@@ -261,37 +56,31 @@
 
 .planSubtitle {
   font-family: "Inter", sans-serif;
-  font-size: 11px; 
+  font-size: 9px; 
   font-weight: 600; 
-  color: #666; 
-  margin-bottom: 14px;
+  color: #e91e8c; 
+  margin-bottom: 10px;
 }
 
 .planDesc { 
-  font-family: "Inter", sans-serif; 
-  font-size: 11px; 
-  color: #666; 
-  line-height: 1.4; 
-  margin-bottom: 14px; 
+  display: none; /* Mantém oculto para economizar espaço vertical nas 3 colunas */
 }
 
+/* Caixa de Preço Horizontal Compacta da Referência */
 .priceBox {
   display: flex; 
   align-items: center; 
-  justify-content: space-between;
-  background: #e91e8c; /* Corrigido: Fundo padrão rosa da referência */
-  border-radius: 10px;
-  padding: 10px 12px; 
-  margin-bottom: 16px;
-}
-
-.priceBoxPink { 
+  justify-content: center;
+  gap: 4px;
   background: #e91e8c; 
+  border-radius: 8px;
+  padding: 8px 6px; 
+  margin-bottom: 12px;
 }
 
 .price {
   font-family: "Inter", sans-serif;
-  font-size: 20px; 
+  font-size: 16px; 
   font-weight: 800; 
   color: #fff; 
   letter-spacing: -0.02em;
@@ -299,104 +88,115 @@
 
 .pricePer {
   font-family: "Inter", sans-serif;
-  font-size: 10px; 
+  font-size: 8px; 
   font-weight: 500; 
   color: rgba(255,255,255,0.85);
+}
+
+.planSection {
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 6px;
 }
 
 .planList {
   list-style: none; 
   padding: 0; 
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   display: flex; 
   flex-direction: column; 
-  gap: 8px;
-  flex-grow: 1; /* Garante alinhamento vertical uniforme */
+  gap: 6px;
+  flex-grow: 1;
 }
 
 .planItem {
   display: flex; 
   align-items: flex-start; 
-  gap: 8px;
+  gap: 6px;
   font-family: "Inter", sans-serif; 
-  font-size: 11px; 
-  color: #333; 
-  line-height: 1.3;
+  font-size: 9px; /* Reduzido para os itens da lista não quebrarem linha agressivamente */
+  color: #222; 
+  line-height: 1.2;
 }
 
+.planItem span {
+  white-space: nowrap; /* Evita quebra de palavras pequenas */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Se o texto for muito longo, põe reticências em vez de quebrar o card */
+}
+
+/* Bloco de Bônus Compacto */
 .bonus {
   display: flex; 
   align-items: center; 
-  gap: 8px;
+  gap: 6px;
   background: #fff0f6; 
   border: 1px solid #fcd4e4;
-  border-radius: 10px;
-  padding: 10px; 
-  margin-bottom: 16px;
+  border-radius: 8px;
+  padding: 6px; 
+  margin-bottom: 12px;
 }
 
 .bonusIcon { 
-  font-size: 16px; 
+  font-size: 12px; 
   flex-shrink: 0; 
 }
 
 .bonusLabel {
   font-family: "Inter", sans-serif;
-  font-size: 8px; 
+  font-size: 7px; 
   font-weight: 800; 
   color: #e91e8c; 
-  letter-spacing: 0.05em; 
-  margin-bottom: 1px;
+  letter-spacing: 0.02em;
 }
 
 .bonusText { 
   font-family: "Inter", sans-serif; 
-  font-size: 11px; 
+  font-size: 9px; 
   font-weight: 600; 
   color: #111; 
 }
 
 .divider { 
   border: none; 
-  border-top: 1px solid #f3f3f3; 
-  margin: 14px 0; 
+  border-top: 1px solid #efeef1; 
+  margin: 10px 0; 
 }
 
 .alsoLabel {
   font-family: "Inter", sans-serif;
-  font-size: 9px; 
+  font-size: 8px; 
   font-weight: 800; 
   color: #e91e8c; 
-  letter-spacing: 0.05em; 
-  margin-bottom: 8px;
+  letter-spacing: 0.02em; 
+  margin-bottom: 6px;
 }
 
+/* Botão de Compra Slim */
 .buyBtn {
   display: flex; 
   align-items: center; 
   justify-content: center;
   width: 100%; 
-  height: 40px; 
+  height: 34px; 
   margin-top: auto;
-  background: #e91e8c; /* Botão uniforme rosa */
+  background: #e91e8c; 
   color: #fff;
   font-family: "Inter", sans-serif; 
-  font-size: 13px; 
+  font-size: 11px; 
   font-weight: 700;
   border-radius: 999px; 
-  text-decoration: none; 
-  transition: background 150ms;
+  text-decoration: none;
 }
 
-.buyBtn:hover { 
-  background: #d0147e; 
-}
-
-/* ── DESKTOP RESPONSIVO ── */
-@media (min-width: 900px) {
-  .page { max-width: 900px; }
-  .coverWrap { aspect-ratio: 16 / 5; }
-  .mediaRow { gap: 16px; padding: 24px; }
-  .pricing { gap: 16px; padding: 16px 24px 40px; }
-  .price { font-size: 24px; }
+/* ── SCALE PARA TELAS MAIORES (DESKTOP) ── */
+@media (min-width: 600px) {
+  .pricing { gap: 12px; padding: 16px 20px 40px; }
+  .planCard { padding: 18px 14px; }
+  .planName { font-size: 16px; }
+  .price { font-size: 20px; }
+  .planItem { font-size: 11px; }
+  .buyBtn { height: 38px; font-size: 12px; }
 }
