@@ -28,11 +28,12 @@ const PLANS = [
   },
 ];
 
-function CheckIcon({ pink = false }: { pink?: boolean }) {
+// Ícone de check reconfigurado para o box rosa quadrado com cantos arredondados da ref
+function CheckIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
-      <rect width="24" height="24" rx="4" fill={pink ? "#e91e8c" : "#111"} />
-      <path d="M6 12l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
+      <rect width="24" height="24" rx="5" fill="#e91e8c" />
+      <path d="M6 12l4 4 8-8" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -73,7 +74,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <div className={styles.nameRow}>
             <span className={styles.modelName}>{product.title}</span>
             <span className={styles.verifiedBadge}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
               </svg>
             </span>
@@ -101,24 +102,24 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* MEDIA — gallery + video in one row */}
+      {/* MEDIA — Exibe 3 mídias em linha perfeitamente coordenadas */}
       {(gallery.length > 0 || videoUrl) && (
         <div className={styles.mediaRow}>
-          {gallery.map((url, i) => (
+          {gallery.slice(0, 3).map((url, i) => (
             <div key={i} className={styles.mediaItem}>
               <img src={url} alt="" className={styles.mediaImg} />
               <div className={styles.mediaBadge}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="white">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
                 </svg>
               </div>
             </div>
           ))}
-          {videoUrl && (
+          {videoUrl && gallery.length < 3 && (
             <div className={styles.mediaItem}>
               <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
               <div className={styles.mediaBadge}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="white">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </div>
@@ -143,19 +144,20 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 <div className={styles.planName}>{plan.name}</div>
                 <div className={styles.planSubtitle}>{plan.subtitle}</div>
                 <p className={styles.planDesc}>{plan.description}</p>
-                <div className={`${styles.priceBox} ${plan.highlight ? styles.priceBoxPink : ""}`}>
+                <div className={styles.priceBox}>
                   <span className={styles.price}>${(price / 100).toFixed(0)}</span>
                   <span className={styles.pricePer}>/one-time</span>
                 </div>
-                <div className={styles.planSection}>What&apos;s included</div>
+                
                 <ul className={styles.planList}>
                   {plan.items.map((item) => (
                     <li key={item} className={styles.planItem}>
-                      <CheckIcon pink />
+                      <CheckIcon />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
+
                 {plan.bonus && (
                   <div className={styles.bonus}>
                     <span className={styles.bonusIcon}>🎁</span>
@@ -165,19 +167,21 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                     </div>
                   </div>
                 )}
+                
                 <div className={styles.divider} />
                 <div className={styles.alsoLabel}>ALL PLANS ALSO INCLUDE</div>
-                <ul className={styles.planList}>
+                <ul className={styles.planList} style={{ marginBottom: 20 }}>
                   {["Usage rights", "LoRA Setup + deployment guidance", "Ongoing support"].map((item) => (
                     <li key={item} className={styles.planItem}>
-                      <CheckIcon pink />
+                      <CheckIcon />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
+
                 <Link
                   href={`/checkout?plan=${plan.id}&product=${product.id}`}
-                  className={`${styles.buyBtn} ${plan.highlight ? styles.buyBtnPink : ""}`}
+                  className={styles.buyBtn}
                 >
                   Get {plan.name}
                 </Link>
