@@ -137,10 +137,10 @@
 }
 
 .tagRow { 
-  display: flex; 
-  flex-wrap: wrap; 
-  gap: 8px; 
-  margin-bottom: 14px; /* Reduzida a distância das hashtags para o botão see plans */
+  display: flex !important; 
+  flex-wrap: wrap !important; 
+  gap: 6px !important; 
+  margin-bottom: 8px !important; /* Diminui o espaço entre as tags e o botão see plans */
 }
 
 .tag { 
@@ -168,9 +168,9 @@
 /* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO (Mobile e Desktop) ── */
 .mediaRow {
   width: 100% !important;
-  overflow: hidden !important; /* Esconde o transbordo das mídias fora da tela */
-  margin-top: 4px; /* CORREÇÃO: Aproxima as mídias do botão 'See plans' */
-  margin-bottom: 16px;
+  overflow: hidden !important;
+  margin-top: -4px !important; /* Puxa o carrossel para colar no botão See Plans */
+  margin-bottom: 8px !important;
 }
 
 .mediaTrack {
@@ -193,14 +193,14 @@
 }
 
 .mediaItem {
-  flex: 0 0 250px !important; /* Tamanho fixo e imponente para as mídias em qualquer tela */
-  width: 250px !important;
-  position: relative;
-  border-radius: 18px;
-  overflow: hidden;
-  aspect-ratio: 3 / 4;
-  background: #ddd;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  flex: 0 0 54% !important; /* Ajusta a largura para manter o equilíbrio visual */
+  width: 54% !important;
+  position: relative !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  aspect-ratio: 4 / 5 !important; /* CORREÇÃO: Proporção calibrada para a base subir e aparecer na tela */
+  background: #ddd !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
 }
 
 .mediaImg, .mediaVideo {
@@ -404,5 +404,19 @@
   .mediaItem {
     flex: 0 0 280px !important; /* Ligeiramente maior em telas desktop para valorizar a imagem */
     width: 280px !important;
+  }
+}
+
+@media (min-width: 650px) {
+  .mediaRow {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+    margin-top: 12px !important;
+  }
+  .mediaItem {
+    flex: none !important;
+    width: 100% !important;
+    aspect-ratio: 3 / 4 !important; /* No desktop mantém o visual esticado original */
   }
 }
