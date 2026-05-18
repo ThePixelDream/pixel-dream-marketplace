@@ -108,27 +108,17 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* MEDIA — Exibe 3 mídias em linha perfeitamente coordenadas */}
+      {/* MEDIA — Carrossel Horizontal Completo (Sem limites de quantidade e sem badges) */}
       {(gallery.length > 0 || videoUrl) && (
         <div className={styles.mediaRow}>
-          {gallery.slice(0, 3).map((url, i) => (
+          {gallery.map((url, i) => (
             <div key={i} className={styles.mediaItem}>
               <img src={url} alt="" className={styles.mediaImg} />
-              <div className={styles.mediaBadge}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                </svg>
-              </div>
             </div>
           ))}
-          {videoUrl && gallery.length < 3 && (
+          {videoUrl && (
             <div className={styles.mediaItem}>
               <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
-              <div className={styles.mediaBadge}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
             </div>
           )}
         </div>
