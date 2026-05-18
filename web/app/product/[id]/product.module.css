@@ -11,9 +11,9 @@
 
 /* ── HEADER ── */
 .header { 
-  margin-bottom: 12px; /* Reduzido o espaço abaixo do cabeçalho */
+  margin-bottom: 12px;
   background: #fff;
-  padding-bottom: 14px; /* Menos respiro interno inferior */
+  padding-bottom: 14px;
   position: relative;
   z-index: 1;
 }
@@ -42,7 +42,7 @@
 
 .avatarWrap {
   position: absolute;
-  bottom: -32px; /* Puxado ligeiramente para cima para compactar */
+  bottom: -32px;
   left: 20px;
   width: 84px; 
   height: 84px;
@@ -67,16 +67,15 @@
   background: #ccc; 
 }
 
-/* CORREÇÃO: Reduzido o padding superior de 55px para 42px para aproximar o Nome da Foto de Perfil */
 .headerInfo { 
-  padding: 34px 20px 0 !important; /* Puxa o Nome mais para cima da foto de perfil */
+  padding: 38px 20px 0 !important; /* CORREÇÃO: Aproxima o Nome da Foto de Perfil eliminando o buraco branco */
 }
 
 .nameRow {
   display: inline-flex !important; 
   align-items: center !important; 
   gap: 8px !important;
-  margin-bottom: 4px !important; /* Cola a hashtag quase colada no Nome */
+  margin-bottom: 4px !important;
   flex-wrap: wrap !important;
 }
 
@@ -140,7 +139,7 @@
   display: flex !important; 
   flex-wrap: wrap !important; 
   gap: 6px !important; 
-  margin-bottom: 8px !important; /* Diminui o espaço entre as tags e o botão see plans */
+  margin-bottom: 8px !important;
 }
 
 .tag { 
@@ -165,12 +164,12 @@
   text-decoration: none; 
 }
 
-/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO (Mobile e Desktop) ── */
+/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO ── */
 .mediaRow {
   width: 100% !important;
   overflow: hidden !important;
-  margin-top: -4px !important; /* Puxa o carrossel para colar no botão See Plans */
-  margin-bottom: 8px !important;
+  margin-top: -12px !important; /* CORREÇÃO: Cola a galeria perfeitamente embaixo do botão See plans */
+  margin-bottom: 16px !important;
 }
 
 .mediaTrack {
@@ -181,46 +180,42 @@
   padding: 8px 16px;
   width: max-content !important;
   min-width: max-content;
-  
-  /* Ativa a animação contínua e suave controlada por hardware */
   animation: mediaMarqueeAnimate 24000ms linear infinite !important;
   will-change: transform;
 }
 
-/* Pausa o scroll automático ao passar o mouse (Desktops) */
 .mediaRow:hover .mediaTrack {
   animation-play-state: paused !important;
 }
 
 .mediaItem {
-  flex: 0 0 46% !important; /* Define uma largura perfeita para caber na tela sem ignorar o aspecto */
-  width: 46% !important;
+  flex: 0 0 62% !important; /* CORREÇÃO: Mantém a largura perfeita original sem dar zoom absurdo */
+  width: 62% !important;
   position: relative !important;
-  border-radius: 14px !important;
+  border-radius: 18px !important;
   overflow: hidden !important;
-  aspect-ratio: 3 / 4 !important; /* Mantém a proporção esticada e elegante da sua referência */
-  background: #111 !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+  aspect-ratio: 3 / 4 !important; /* Mantém a proporção vertical esticada correta */
+  background: #eee !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
 }
 
 .mediaImg, .mediaVideo {
   width: 100% !important; 
   height: 100% !important;
   display: block !important;
-  object-fit: cover !important; /* Preenche o card todo sem distorcer os corpos */
+  object-fit: cover !important;
 }
 
-/* Engrenagem de Loop Infinito */
 @keyframes mediaMarqueeAnimate {
   0% {
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(-50%, 0, 0); /* Recua exatamente metade da pista duplicada */
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
-/* ── PRICING (Mantido estrutura estável em 3 colunas) ── */
+/* ── PRICING ── */
 .pricing {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -396,27 +391,26 @@
   text-decoration: none;
 }
 
-/* ── MEDIA QUERY DE DESKTOP: Mantém comportamento idêntico de carrossel infinito ── */
+/* ── MEDIA QUERIES DETALHADOS (Garante o mesmo scroll e proporções no Desktop) ── */
+@media (min-width: 650px) {
+  .mediaRow {
+    display: flex !important; /* Mantém a estrutura de carrossel contínuo horizontal no desktop */
+    overflow-x: hidden !important;
+    margin-top: 12px !important;
+  }
+  .mediaItem {
+    flex: 0 0 240px !important; /* Largura fixa e estável para desktops */
+    width: 240px !important;
+    aspect-ratio: 3 / 4 !important;
+  }
+}
+
 @media (min-width: 900px) {
   .page { max-width: 900px; }
   .coverWrap { aspect-ratio: 16 / 5; }
   .pricing { gap: 14px; }
   .mediaItem {
-    flex: 0 0 280px !important; /* Ligeiramente maior em telas desktop para valorizar a imagem */
+    flex: 0 0 280px !important; /* Concede destaque proporcional em telas largas */
     width: 280px !important;
-  }
-}
-
-@media (min-width: 650px) {
-  .mediaRow {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 12px !important;
-    margin-top: 12px !important;
-  }
-  .mediaItem {
-    flex: none !important;
-    width: 100% !important;
-    aspect-ratio: 3 / 4 !important; /* Mantém o padrão lindo de grade no PC */
   }
 }
