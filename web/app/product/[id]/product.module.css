@@ -11,9 +11,9 @@
 
 /* ── HEADER ── */
 .header { 
-  margin-bottom: 0px; /* Reduzido a zero para colar na div de mídias abaixo */
+  margin-bottom: 12px;
   background: #fff;
-  padding-bottom: 10px; /* Encolhido para aproximar o botão da borda inferior */
+  padding-bottom: 14px;
   position: relative;
   z-index: 1;
 }
@@ -67,17 +67,15 @@
   background: #ccc; 
 }
 
-/* AJUSTE 1: Puxa o Nome da modelo bem mais para perto da Foto de Perfil */
 .headerInfo { 
-  padding: 34px 20px 0 !important; 
+  padding: 34px 20px 0 !important;
 }
 
-/* AJUSTE 2: Espaçamento reduzido abaixo do nome */
 .nameRow {
   display: inline-flex !important; 
   align-items: center !important; 
   gap: 8px !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 4px !important;
   flex-wrap: wrap !important;
 }
 
@@ -137,7 +135,6 @@
   margin-top: 8px; 
 }
 
-/* AJUSTE 3: Minimiza a distância entre as hashtags e o botão See Plans */
 .tagRow { 
   display: flex !important; 
   flex-wrap: wrap !important; 
@@ -167,13 +164,12 @@
   text-decoration: none; 
 }
 
-/* ── MÍDIAS: CARROSSEL COPIADO DO SEU HISTÓRICO PERFEITO ── */
+/* ── MÍDIAS: CARROSSEL COM SCROLL INFINITO AUTOMÁTICO ── */
 .mediaRow {
   width: 100% !important;
   overflow: hidden !important;
-  /* AJUSTE 4: Margem negativa agressiva para colar o topo das imagens embaixo do botão See Plans */
-  margin-top: -14px !important; 
-  margin-bottom: 16px !important;
+  margin-top: -4px !important; 
+  margin-bottom: 8px !important;
 }
 
 .mediaTrack {
@@ -192,7 +188,6 @@
   animation-play-state: paused !important;
 }
 
-/* RETORNADO: Dimensões intocadas idênticas às do seu print de sucesso */
 .mediaItem {
   flex: 0 0 62% !important; 
   width: 62% !important;
@@ -396,7 +391,6 @@
   text-decoration: none;
 }
 
-/* ── CONFIGURAÇÃO DE DESKTOP ADAPTADA PARA MANTER O SCROLL HORIZONTAL INFINITO ── */
 @media (min-width: 650px) {
   .mediaRow {
     display: flex !important; 
