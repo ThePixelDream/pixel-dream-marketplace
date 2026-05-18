@@ -411,12 +411,15 @@
 }
 
 /* ── MEDIA QUERY DE DESKTOP: Mantém comportamento idêntico de carrossel infinito ── */
-@media (min-width: 900px) {
-  .page { max-width: 900px; }
-  .coverWrap { aspect-ratio: 16 / 5; }
-  .pricing { gap: 14px; }
+@media (min-width: 650px) {
+  .mediaRow {
+    display: flex !important; 
+    overflow-x: auto !important; /* Mantém o sistema de rolagem ativo no PC para o clique responder */
+    margin-top: 12px !important;
+  }
   .mediaItem {
-    flex: 0 0 280px !important; /* Ligeiramente maior em telas desktop para valorizar a imagem */
-    width: 280px !important;
+    flex: 0 0 240px !important; 
+    width: 240px !important;
+    aspect-ratio: 3 / 4 !important;
   }
 }
