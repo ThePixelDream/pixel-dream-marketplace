@@ -193,13 +193,13 @@
 }
 
 .mediaItem {
-  flex: 0 0 54% !important; /* Ajusta a largura para manter o equilíbrio visual */
-  width: 54% !important;
+  flex: 0 0 46% !important; /* Define uma largura perfeita para caber na tela sem ignorar o aspecto */
+  width: 46% !important;
   position: relative !important;
   border-radius: 14px !important;
   overflow: hidden !important;
-  aspect-ratio: 4 / 5 !important; /* CORREÇÃO: Proporção calibrada para a base subir e aparecer na tela */
-  background: #ddd !important;
+  aspect-ratio: 3 / 4 !important; /* Mantém a proporção esticada e elegante da sua referência */
+  background: #111 !important;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
 }
 
@@ -207,11 +207,7 @@
   width: 100% !important; 
   height: 100% !important;
   display: block !important;
-  
-  /* CORREÇÃO AQUI: 'contain' faz a imagem inteira caber na caixa sem dar zoom.
-     O background #000 (preto) ou #fff (branco) serve de moldura para o que sobrar */
-  object-fit: contain !important; 
-  background: #111 !important; 
+  object-fit: cover !important; /* Preenche o card todo sem distorcer os corpos */
 }
 
 /* Engrenagem de Loop Infinito */
@@ -421,6 +417,6 @@
   .mediaItem {
     flex: none !important;
     width: 100% !important;
-    aspect-ratio: 3 / 4 !important; /* No desktop mantém o visual esticado original */
+    aspect-ratio: 3 / 4 !important; /* Mantém o padrão lindo de grade no PC */
   }
 }
