@@ -1,215 +1,401 @@
-/* ── PRICING (Sempre em 3 colunas paralelas e responsivas) ── */
+/* app/product/[id]/product.module.css */
+
+.page {
+  min-height: 100vh;
+  background: #fff5f8; /* Tom sutil e limpo de fundo da referência */
+  padding-bottom: 60px;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── HEADER ── */
+.header { 
+  margin-bottom: 16px; 
+  background: #fff;
+  padding-bottom: 20px;
+}
+
+.coverWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  background: #eee;
+}
+
+.cover {
+  width: 100%; 
+  height: 100%;
+  object-fit: cover; 
+  object-position: center center; 
+  display: block;
+}
+
+.coverPlaceholder { 
+  width: 100%; 
+  height: 100%; 
+  background: #ddd; 
+}
+
+.avatarWrap {
+  position: absolute;
+  bottom: -40px; 
+  left: 20px;
+  width: 90px; 
+  height: 90px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  overflow: hidden;
+  background: #eee;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+.avatar { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  display: block; 
+}
+
+.avatarPlaceholder { 
+  width: 100%; 
+  height: 100%; 
+  background: #ccc; 
+}
+
+.headerInfo { 
+  padding: 55px 20px 0; 
+}
+
+.nameRow {
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  margin-bottom: 16px; 
+  flex-wrap: wrap;
+}
+
+.modelName {
+  font-family: "Inter", sans-serif;
+  font-size: 24px; 
+  font-weight: 800; 
+  color: #1a1a1a; 
+  letter-spacing: -0.02em;
+}
+
+.verifiedBadge {
+  width: 20px; 
+  height: 20px; 
+  background: #e91e8c; 
+  border-radius: 50%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  flex-shrink: 0;
+}
+
+.availableTag {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #e91e8c; 
+  letter-spacing: 0.05em;
+}
+
+.availableDot { 
+  width: 8px; 
+  height: 8px; 
+  border-radius: 50%; 
+  background: #10b981; 
+}
+
+.soldTag {
+  display: inline-flex; 
+  align-items: center;
+  font-family: "Inter", sans-serif;
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #dc2626;
+  background: #fee2e2; 
+  padding: 4px 12px; 
+  border-radius: 999px;
+}
+
+.soldMsg { 
+  font-family: "Inter", sans-serif; 
+  font-size: 15px; 
+  color: #666; 
+  margin-top: 8px; 
+}
+
+.tagRow { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+  margin-bottom: 16px; 
+}
+
+.tag { 
+  font-family: "Inter", sans-serif; 
+  font-size: 13px; 
+  font-weight: 600; 
+  color: #e91e8c; 
+}
+
+.seePlansBtn {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 100%; 
+  height: 48px;
+  background: #e91e8c; 
+  color: #fff;
+  font-family: "Inter", sans-serif; 
+  font-size: 16px; 
+  font-weight: 700;
+  border-radius: 999px; 
+  text-decoration: none; 
+}
+
+/* ── GALERIA DE MÍDIAS (Restaurada para 3 Colunas Perfeitas) ── */
+.mediaRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+.mediaItem {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: #ddd;
+}
+
+.mediaImg, .mediaVideo {
+  width: 100%; 
+  height: 100%;
+  object-fit: cover; 
+  display: block; 
+}
+
+.mediaBadge {
+  position: absolute; 
+  bottom: 10px; 
+  right: 10px;
+  width: 22px; 
+  height: 22px;
+  background: #e91e8c; 
+  border-radius: 50%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  border: 1.5px solid #fff;
+}
+
+/* ── TABELA DE PREÇOS (3 colunas com rolagem lateral se a tela for menor que 650px) ── */
 .pricing {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 1.5vw !important; /* Espaçamento dinâmico baseado na tela */
-  padding: 12px 8px 32px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 16px;
+  overflow-x: auto; /* Permite scroll horizontal fluido se o celular for muito estreito */
+  scrollbar-width: none; /* Oculta barra no Firefox */
+  -webkit-overflow-scrolling: touch;
+}
+
+.pricing::-webkit-scrollbar {
+  display: none; /* Oculta barra no Chrome/Safari */
 }
 
 .planCard {
-  background: #fff !important; 
-  border-radius: 12px !important;
-  padding: 12px 6px !important; /* Padding enxuto para dar espaço interno */
-  position: relative !important;
-  border: 1.5px solid #f2f2f2 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  min-width: 0 !important; /* Força o card a encolher e respeitar o grid */
-  box-sizing: border-box !important;
+  background: #fff; 
+  border-radius: 16px;
+  padding: 20px 12px; 
+  position: relative;
+  border: 1.5px solid #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 calc(33.333% - 7px); /* Divide a linha em 3 blocos fixos idênticos */
+  min-width: 195px; /* Evita que o card colapse em celulares muito pequenos */
+  box-sizing: border-box;
 }
 
 .planHighlight { 
-  border-color: #e91e8c !important; 
-  box-shadow: 0 4px 14px rgba(233, 30, 140, 0.06) !important;
+  border-color: #e91e8c; 
+  box-shadow: 0 8px 24px rgba(233, 30, 140, 0.06);
 }
 
-/* Badge "Most Popular" responsivo */
 .popularBadge {
-  position: absolute !important; 
-  top: -12px !important; 
-  right: 4px !important;
-  background: #e91e8c !important; 
-  color: #fff !important;
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(5px, 1.5vw, 7px) !important; 
-  font-weight: 900 !important; 
-  text-align: center !important; 
-  border-radius: 50% !important;
-  width: clamp(32px, 9vw, 40px) !important; 
-  height: clamp(32px, 9vw, 40px) !important; 
-  display: flex !important; 
-  flex-direction: column !important;
-  align-items: center !important; 
-  justify-content: center !important;
-  line-height: 1.1 !important;
-  z-index: 5 !important;
+  position: absolute; 
+  top: -14px; 
+  right: 8px;
+  background: #e91e8c; 
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 7px; 
+  font-weight: 900; 
+  text-align: center; 
+  border-radius: 50%;
+  width: 38px; 
+  height: 38px;
+  display: flex; 
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center;
+  line-height: 1.1;
+  z-index: 5;
 }
 
 .planName {
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(11px, 3.2vw, 15px) !important; /* Dimensione dinamicamente */
-  font-weight: 800 !important; 
-  color: #111 !important;
-  letter-spacing: -0.01em !important; 
-  margin-bottom: 2px !important;
+  font-family: "Inter", sans-serif;
+  font-size: 16px; 
+  font-weight: 800; 
+  color: #111;
+  letter-spacing: -0.01em; 
+  margin-bottom: 2px;
 }
 
 .planSubtitle {
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(8px, 2vw, 10px) !important; 
-  font-weight: 600 !important; 
-  color: #e91e8c !important; 
-  margin-bottom: 8px !important;
+  font-family: "Inter", sans-serif;
+  font-size: 10px; 
+  font-weight: 600; 
+  color: #666; 
+  margin-bottom: 12px;
 }
 
 .planDesc { 
-  display: none !important; /* Escondido para salvar espaço nas 3 colunas */
+  display: none; 
 }
 
-/* Caixa de Preço */
+/* Caixa de Preço Rosa Maciço */
 .priceBox {
-  display: flex !important; 
-  align-items: center !important; 
-  justify-content: center !important;
-  gap: 2px !important;
-  background: #e91e8c !important; 
-  border-radius: 6px !important;
-  padding: 6px 4px !important; 
-  margin-bottom: 10px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 4px;
+  background: #e91e8c; 
+  border-radius: 8px;
+  padding: 10px 6px; 
+  margin-bottom: 16px;
 }
 
 .price {
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(13px, 3.8vw, 18px) !important; 
-  font-weight: 800 !important; 
-  color: #fff !important; 
-  letter-spacing: -0.02em !important;
+  font-family: "Inter", sans-serif;
+  font-size: 18px; 
+  font-weight: 800; 
+  color: #fff; 
+  letter-spacing: -0.02em;
 }
 
 .pricePer {
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(7px, 1.8vw, 9px) !important; 
-  color: rgba(255,255,255,0.9) !important;
-}
-
-.planSection {
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(8px, 2vw, 10px) !important;
-  font-weight: 700 !important;
-  color: #111 !important;
-  margin-bottom: 6px !important;
+  font-family: "Inter", sans-serif;
+  font-size: 9px; 
+  color: rgba(255,255,255,0.9);
 }
 
 .planList {
-  list-style: none !important; 
-  padding: 0 !important; 
-  margin: 0 0 10px !important;
-  display: flex !important; 
-  flex-direction: column !important; 
-  gap: 5px !important;
-  flex-grow: 1 !important;
-  width: 100% !important;
+  list-style: none; 
+  padding: 0; 
+  margin: 0 0 16px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px;
+  flex-grow: 1;
 }
 
 .planItem {
-  display: flex !important; 
-  align-items: center !important; 
-  gap: 4px !important;
-  font-family: "Inter", sans-serif !important; 
-  font-size: clamp(7.5px, 2.1vw, 11px) !important; /* Encolhe perfeitamente no celular */
-  color: #222 !important; 
-  line-height: 1.2 !important;
-  width: 100% !important;
-  overflow: hidden !important;
+  display: flex; 
+  align-items: flex-start; 
+  gap: 6px;
+  font-family: "Inter", sans-serif; 
+  font-size: 10px; 
+  color: #333; 
+  line-height: 1.3;
 }
 
 .planItem span {
-  white-space: nowrap !important; /* Impede o texto de quebrar para a linha de baixo */
-  overflow: hidden !important;
-  text-overflow: ellipsis !important; /* Adiciona "..." de forma elegante se não couber */
+  white-space: nowrap;
 }
 
-/* Caixa de Bônus */
+/* Bloco de Bônus */
 .bonus {
-  display: flex !important; 
-  align-items: center !important; 
-  gap: 4px !important;
-  background: #fff0f6 !important; 
-  border: 1px solid #fcd4e4 !important;
-  border-radius: 6px !important;
-  padding: 4px !important; 
-  margin-bottom: 10px !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
+  display: flex; 
+  align-items: center; 
+  gap: 6px;
+  background: #fff0f6; 
+  border: 1px solid #fcd4e4;
+  border-radius: 8px;
+  padding: 8px; 
+  margin-bottom: 16px;
 }
 
 .bonusIcon { 
-  font-size: clamp(9px, 2.5vw, 12px) !important; 
-  flex-shrink: 0 !important; 
+  font-size: 14px; 
+  flex-shrink: 0; 
 }
 
 .bonusLabel {
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(6px, 1.5vw, 7px) !important; 
-  font-weight: 800 !important; 
-  color: #e91e8c !important;
+  font-family: "Inter", sans-serif;
+  font-size: 7px; 
+  font-weight: 800; 
+  color: #e91e8c; 
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
 }
 
 .bonusText { 
-  font-family: "Inter", sans-serif !important; 
-  font-size: clamp(7.5px, 2vw, 9px) !important; 
-  font-weight: 600 !important; 
-  color: #111 !important; 
+  font-family: "Inter", sans-serif; 
+  font-size: 10px; 
+  font-weight: 600; 
+  color: #111; 
 }
 
 .divider { 
-  border: none !important; 
-  border-top: 1px solid #efeef1 !important; 
-  margin: 8px 0 !important; 
-  width: 100% !important;
+  border: none; 
+  border-top: 1px solid #f0f0f0; 
+  margin: 12px 0; 
 }
 
 .alsoLabel {
-  font-family: "Inter", sans-serif !important;
-  font-size: clamp(7px, 1.8vw, 8px) !important; 
-  font-weight: 800 !important; 
-  color: #e91e8c !important; 
-  margin-bottom: 4px !important;
+  font-family: "Inter", sans-serif;
+  font-size: 8px; 
+  font-weight: 800; 
+  color: #e91e8c; 
+  margin-bottom: 6px;
 }
 
-/* Botão de Compra Slim */
+/* Botão de Compra */
 .buyBtn {
-  display: flex !important; 
-  align-items: center !important; 
-  justify-content: center !important;
-  width: 100% !important; 
-  height: clamp(28px, 8vw, 36px) !important; 
-  margin-top: auto !important;
-  background: #e91e8c !important; 
-  color: #fff !important;
-  font-family: "Inter", sans-serif !important; 
-  font-size: clamp(9px, 2.5vw, 12px) !important; 
-  font-weight: 700 !important;
-  border-radius: 999px !important; 
-  text-decoration: none !important;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 100%; 
+  height: 36px; 
+  background: #e91e8c; 
+  color: #fff;
+  font-family: "Inter", sans-serif; 
+  font-size: 12px; 
+  font-weight: 700;
+  border-radius: 999px; 
+  text-decoration: none;
 }
 
-/* ── MEDIA QUERY PARA TELAS GRANDES (DESKTOP) ── */
-@media (min-width: 600px) {
-  .pricing { 
-    gap: 14px !important; 
-    padding: 16px 20px 40px !important; 
+/* ── CONFIGURAÇÕES PARA DISPOSITIVOS GRANDES ── */
+@media (min-width: 650px) {
+  .pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
-  .planCard { 
-    padding: 18px 14px !important; 
-    border-radius: 16px !important;
+  .planCard {
+    flex: none;
+    min-width: 0;
   }
-  .planName { font-size: 16px !important; }
-  .price { font-size: 20px !important; }
-  .planItem { font-size: 11px !important; }
-  .buyBtn { height: 38px !important; font-size: 13px !important; }
 }
