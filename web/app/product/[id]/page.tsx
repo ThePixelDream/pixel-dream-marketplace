@@ -108,19 +108,36 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* MEDIA — Carrossel Horizontal Completo (Sem limites de quantidade e sem badges) */}
+      {/* MEDIA — gallery + video in one row */}
       {(gallery.length > 0 || videoUrl) && (
         <div className={styles.mediaRow}>
-          {gallery.map((url, i) => (
-            <div key={i} className={styles.mediaItem}>
-              <img src={url} alt="" className={styles.mediaImg} />
-            </div>
-          ))}
-          {videoUrl && (
-            <div className={styles.mediaItem}>
-              <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
-            </div>
-          )}
+          <div className={styles.mediaTrack}>
+            
+            {/* PRIMEIRA LEVA (Original) */}
+            {gallery.map((url, i) => (
+              <div key={`orig-img-${i}`} className={styles.mediaItem}>
+                <img src={url} alt="" className={styles.mediaImg} />
+              </div>
+            ))}
+            {videoUrl && (
+              <div className={styles.mediaItem}>
+                <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
+              </div>
+            )}
+
+            {/* SEGUNDA LEVA (Cópia para criar o efeito infinito visual) */}
+            {gallery.map((url, i) => (
+              <div key={`dup-img-${i}`} className={`${styles.mediaItem} ${styles.mediaItemDup}`} aria-hidden="true">
+                <img src={url} alt="" className={styles.mediaImg} />
+              </div>
+            ))}
+            {videoUrl && (
+              <div className={styles.mediaItem} aria-hidden="true">
+                <video src={videoUrl} className={styles.mediaVideo} muted playsInline loop autoPlay />
+              </div>
+            )}
+
+          </div>
         </div>
       )}
 
