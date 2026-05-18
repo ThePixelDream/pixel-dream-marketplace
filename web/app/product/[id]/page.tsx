@@ -60,19 +60,19 @@ if (!product) notFound();
   return (
     <div className={styles.page}>
 
-      {/* HEADER */}
+            {/* HEADER */}
       <div className={styles.header}>
         <div className={styles.coverWrap}>
           {product.cover_image_url
             ? <img src={product.cover_image_url} alt={product.title} className={styles.cover} />
             : <div className={styles.coverPlaceholder} />
           }
-        </div>
-        <div className={styles.avatarWrap}>
-          {product.avatar_image_url
-            ? <img src={product.avatar_image_url} alt="" className={styles.avatar} />
-            : <div className={styles.avatarPlaceholder} />
-          }
+          <div className={styles.avatarWrap}>
+            {product.avatar_image_url
+              ? <img src={product.avatar_image_url} alt="" className={styles.avatar} />
+              : <div className={styles.avatarPlaceholder} />
+            }
+          </div>
         </div>
         <div className={styles.headerInfo}>
           <div className={styles.nameRow}>
