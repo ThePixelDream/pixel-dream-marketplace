@@ -2,230 +2,401 @@
 
 .page {
   min-height: 100vh;
-  background: #fce4f0;
+  background: #fff5f8; /* Tom sutil e limpo de fundo da referência */
   padding-bottom: 60px;
   max-width: 700px;
   margin: 0 auto;
 }
 
 /* ── HEADER ── */
-.header { margin-bottom: 16px; }
+.header { 
+  margin-bottom: 16px; 
+  background: #fff;
+  padding-bottom: 20px;
+}
 
 .coverWrap {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 7;
   overflow: hidden;
-  background: #ddd;
+  background: #eee;
 }
 
 .cover {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: top center; display: block;
+  width: 100%; 
+  height: 100%;
+  object-fit: cover; 
+  object-position: center center; 
+  display: block;
 }
 
-.coverPlaceholder { width: 100%; height: 100%; background: #ddd; }
+.coverPlaceholder { 
+  width: 100%; 
+  height: 100%; 
+  background: #ddd; 
+}
 
 .avatarWrap {
   position: absolute;
-  bottom: -42px; left: 16px;
-  width: 84px; height: 84px;
+  bottom: -40px; 
+  left: 20px;
+  width: 90px; 
+  height: 90px;
   border-radius: 50%;
-  border: 3px solid #e91e8c;
+  border: 4px solid #fff; /* Borda branca idêntica à referência */
   overflow: hidden;
   background: #eee;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
   z-index: 10;
 }
 
-.avatar { width: 100%; height: 100%; object-fit: cover; display: block; }
-.avatarPlaceholder { width: 100%; height: 100%; background: #ccc; }
+.avatar { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  display: block; 
+}
 
-.headerInfo { padding: 50px 16px 0; }
+.avatarPlaceholder { 
+  width: 100%; 
+  height: 100%; 
+  background: #ccc; 
+}
+
+.headerInfo { 
+  padding: 55px 20px 0; 
+}
 
 .nameRow {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 6px; flex-wrap: wrap;
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  margin-bottom: 16px; 
+  flex-wrap: wrap;
 }
 
 .modelName {
   font-family: "Inter", sans-serif;
-  font-size: 20px; font-weight: 900; color: #111; letter-spacing: -0.01em;
+  font-size: 24px; 
+  font-weight: 800; 
+  color: #1a1a1a; 
+  letter-spacing: -0.02em;
 }
 
 .verifiedBadge {
-  width: 22px; height: 22px; background: #2563eb; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 20px; 
+  height: 20px; 
+  background: #e91e8c; 
+  border-radius: 50%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  flex-shrink: 0;
 }
 
 .availableTag {
-  display: inline-flex; align-items: center; gap: 5px;
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px;
   font-family: "Inter", sans-serif;
-  font-size: 11px; font-weight: 700; color: #16a34a; letter-spacing: 0.06em;
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #e91e8c; 
+  letter-spacing: 0.05em;
 }
 
-.availableDot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; }
+.availableDot { 
+  width: 8px; 
+  height: 8px; 
+  border-radius: 50%; 
+  background: #10b981; 
+}
 
 .soldTag {
-  display: inline-flex; align-items: center;
+  display: inline-flex; 
+  align-items: center;
   font-family: "Inter", sans-serif;
-  font-size: 11px; font-weight: 700; color: #dc2626;
-  background: #fee2e2; padding: 3px 10px; border-radius: 999px;
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #dc2626;
+  background: #fee2e2; 
+  padding: 4px 12px; 
+  border-radius: 999px;
 }
 
-.soldMsg { font-family: "Inter", sans-serif; font-size: 15px; color: #555; margin-top: 8px; }
+.soldMsg { 
+  font-family: "Inter", sans-serif; 
+  font-size: 15px; 
+  color: #666; 
+  margin-top: 8px; 
+}
 
-.tagRow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.tag { font-family: "Inter", sans-serif; font-size: 12px; font-weight: 600; color: #e91e8c; }
+.tagRow { 
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 8px; 
+  margin-bottom: 16px; 
+}
+
+.tag { 
+  font-family: "Inter", sans-serif; 
+  font-size: 13px; 
+  font-weight: 600; 
+  color: #e91e8c; 
+}
 
 .seePlansBtn {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; height: 50px;
-  background: #e91e8c; color: #fff;
-  font-family: "Inter", sans-serif; font-size: 16px; font-weight: 700;
-  border-radius: 999px; text-decoration: none; transition: background 150ms;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 100%; 
+  height: 48px;
+  background: #e91e8c; 
+  color: #fff;
+  font-family: "Inter", sans-serif; 
+  font-size: 16px; 
+  font-weight: 700;
+  border-radius: 999px; 
+  text-decoration: none; 
+  transition: opacity 150ms;
 }
-.seePlansBtn:hover { background: #c71578; }
 
-/* ── MEDIA (gallery + video in one row) ── */
+.seePlansBtn:hover { 
+  opacity: 0.9; 
+}
+
+/* ── CORREÇÃO DA MÍDIA (Ajustado para bater com as 3 colunas da referência) ── */
 .mediaRow {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr); /* CORRIGIDO: 3 colunas perfeitas */
+  gap: 12px;
   padding: 16px;
 }
 
 .mediaItem {
   position: relative;
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   aspect-ratio: 3 / 4;
   background: #ddd;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .mediaImg, .mediaVideo {
-  width: 100%; height: 100%;
-  object-fit: cover; display: block; border-radius: 14px;
+  width: 100%; 
+  height: 100%;
+  object-fit: cover; 
+  display: block; 
+  border-radius: 16px;
 }
 
 .mediaBadge {
-  position: absolute; bottom: 8px; right: 8px;
-  width: 22px; height: 22px;
-  background: #e91e8c; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  position: absolute; 
+  bottom: 10px; 
+  right: 10px;
+  width: 22px; 
+  height: 22px;
+  background: #e91e8c; 
+  border-radius: 50%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  border: 1.5px solid #fff;
 }
 
-/* ── PRICING (always 3 columns) ── */
+/* ── PRICING (Sincronizado com os cards de planos da referência) ── */
 .pricing {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 8px 16px 0;
+  gap: 12px;
+  padding: 8px 16px 32px;
 }
 
 .planCard {
-  background: #fff; border-radius: 16px;
-  padding: 16px 12px; position: relative;
-  border: 2px solid transparent;
+  background: #fff; 
+  border-radius: 20px;
+  padding: 20px 14px; 
+  position: relative;
+  border: 1.5px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
 }
 
-.planHighlight { border-color: #e91e8c; }
+.planHighlight { 
+  border-color: #e91e8c; 
+  box-shadow: 0 8px 24px rgba(233, 30, 140, 0.1);
+}
 
 .popularBadge {
-  position: absolute; top: -14px; right: 10px;
-  background: #e91e8c; color: #fff;
+  position: absolute; 
+  top: -18px; 
+  right: 14px;
+  background: #e91e8c; 
+  color: #fff;
   font-family: "Inter", sans-serif;
-  font-size: 7px; font-weight: 800; letter-spacing: 0.04em;
-  text-align: center; border-radius: 50%;
-  width: 44px; height: 44px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 1px; line-height: 1.2;
+  font-size: 8px; 
+  font-weight: 800; 
+  letter-spacing: 0.02em;
+  text-align: center; 
+  border-radius: 50%;
+  width: 46px; 
+  height: 46px;
+  display: flex; 
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center;
+  line-height: 1.1;
+  box-shadow: 0 4px 10px rgba(233, 30, 140, 0.3);
 }
 
 .planName {
   font-family: "Inter", sans-serif;
-  font-size: 14px; font-weight: 900; color: #111;
-  letter-spacing: -0.01em; margin-bottom: 2px;
+  font-size: 18px; 
+  font-weight: 800; 
+  color: #111;
+  letter-spacing: -0.01em; 
+  margin-bottom: 2px;
 }
 
 .planSubtitle {
   font-family: "Inter", sans-serif;
-  font-size: 10px; font-weight: 600; color: #e91e8c; margin-bottom: 8px;
+  font-size: 11px; 
+  font-weight: 600; 
+  color: #666; 
+  margin-bottom: 14px;
 }
 
-.planDesc { display: none; } /* hidden on mobile to save space */
+.planDesc { 
+  font-family: "Inter", sans-serif; 
+  font-size: 11px; 
+  color: #666; 
+  line-height: 1.4; 
+  margin-bottom: 14px; 
+}
 
 .priceBox {
-  display: flex; align-items: baseline; gap: 4px;
-  background: #111; border-radius: 10px;
-  padding: 8px 10px; margin-bottom: 12px;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  background: #e91e8c; /* Corrigido: Fundo padrão rosa da referência */
+  border-radius: 10px;
+  padding: 10px 12px; 
+  margin-bottom: 16px;
 }
-.priceBoxPink { background: #e91e8c; }
+
+.priceBoxPink { 
+  background: #e91e8c; 
+}
 
 .price {
   font-family: "Inter", sans-serif;
-  font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -0.02em;
+  font-size: 20px; 
+  font-weight: 800; 
+  color: #fff; 
+  letter-spacing: -0.02em;
 }
 
 .pricePer {
   font-family: "Inter", sans-serif;
-  font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.75);
-}
-
-.planSection {
-  font-family: "Inter", sans-serif;
-  font-size: 10px; font-weight: 700; color: #111; margin-bottom: 8px;
+  font-size: 10px; 
+  font-weight: 500; 
+  color: rgba(255,255,255,0.85);
 }
 
 .planList {
-  list-style: none; padding: 0; margin: 0 0 10px;
-  display: flex; flex-direction: column; gap: 5px;
+  list-style: none; 
+  padding: 0; 
+  margin: 0 0 16px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px;
+  flex-grow: 1; /* Garante alinhamento vertical uniforme */
 }
 
 .planItem {
-  display: flex; align-items: flex-start; gap: 6px;
-  font-family: "Inter", sans-serif; font-size: 10px; color: #222; line-height: 1.3;
+  display: flex; 
+  align-items: flex-start; 
+  gap: 8px;
+  font-family: "Inter", sans-serif; 
+  font-size: 11px; 
+  color: #333; 
+  line-height: 1.3;
 }
 
 .bonus {
-  display: flex; align-items: center; gap: 6px;
-  background: #fce4f0; border-radius: 8px;
-  padding: 8px 8px; margin-bottom: 10px;
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  background: #fff0f6; 
+  border: 1px solid #fcd4e4;
+  border-radius: 10px;
+  padding: 10px; 
+  margin-bottom: 16px;
 }
-.bonusIcon { font-size: 14px; flex-shrink: 0; }
+
+.bonusIcon { 
+  font-size: 16px; 
+  flex-shrink: 0; 
+}
+
 .bonusLabel {
   font-family: "Inter", sans-serif;
-  font-size: 7px; font-weight: 800; color: #e91e8c; letter-spacing: 0.06em; margin-bottom: 1px;
+  font-size: 8px; 
+  font-weight: 800; 
+  color: #e91e8c; 
+  letter-spacing: 0.05em; 
+  margin-bottom: 1px;
 }
-.bonusText { font-family: "Inter", sans-serif; font-size: 9px; font-weight: 600; color: #111; }
 
-.divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
+.bonusText { 
+  font-family: "Inter", sans-serif; 
+  font-size: 11px; 
+  font-weight: 600; 
+  color: #111; 
+}
+
+.divider { 
+  border: none; 
+  border-top: 1px solid #f3f3f3; 
+  margin: 14px 0; 
+}
 
 .alsoLabel {
   font-family: "Inter", sans-serif;
-  font-size: 7px; font-weight: 800; color: #e91e8c; letter-spacing: 0.08em; margin-bottom: 6px;
+  font-size: 9px; 
+  font-weight: 800; 
+  color: #e91e8c; 
+  letter-spacing: 0.05em; 
+  margin-bottom: 8px;
 }
 
 .buyBtn {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; height: 36px; margin-top: 12px;
-  background: #111; color: #fff;
-  font-family: "Inter", sans-serif; font-size: 11px; font-weight: 700;
-  border-radius: 999px; text-decoration: none; transition: opacity 150ms;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 100%; 
+  height: 40px; 
+  margin-top: auto;
+  background: #e91e8c; /* Botão uniforme rosa */
+  color: #fff;
+  font-family: "Inter", sans-serif; 
+  font-size: 13px; 
+  font-weight: 700;
+  border-radius: 999px; 
+  text-decoration: none; 
+  transition: background 150ms;
 }
-.buyBtn:hover { opacity: 0.85; }
-.buyBtnPink { background: #e91e8c; }
 
-/* ── DESKTOP ── */
+.buyBtn:hover { 
+  background: #d0147e; 
+}
+
+/* ── DESKTOP RESPONSIVO ── */
 @media (min-width: 900px) {
   .page { max-width: 900px; }
   .coverWrap { aspect-ratio: 16 / 5; }
-  .planName { font-size: 18px; }
-  .planDesc { display: block; font-family: "Inter", sans-serif; font-size: 11px; color: #555; line-height: 1.4; margin-bottom: 10px; }
+  .mediaRow { gap: 16px; padding: 24px; }
+  .pricing { gap: 16px; padding: 16px 24px 40px; }
   .price { font-size: 24px; }
-  .planItem { font-size: 12px; }
-  .buyBtn { height: 42px; font-size: 13px; }
-  .mediaRow { padding: 20px 24px; gap: 12px; }
-  .pricing { padding: 8px 24px 0; gap: 14px; }
 }
