@@ -10,11 +10,11 @@
    HEADER
 ══════════════════════════════ */
 .header {
-  position: relative;
   margin-bottom: 24px;
 }
 
 .coverWrap {
+  position: relative;
   width: 100%;
   height: 260px;
   overflow: hidden;
@@ -29,17 +29,25 @@
   display: block;
 }
 
+.coverPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #ddd;
+}
+
+/* Avatar sits on top of cover, bottom-left */
 .avatarWrap {
   position: absolute;
-  bottom: -48px;
+  bottom: -44px;
   left: 20px;
-  width: 90px;
-  height: 90px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: 3px solid #e91e8c;
   overflow: hidden;
   background: #eee;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
 }
 
 .avatar {
@@ -49,15 +57,22 @@
   display: block;
 }
 
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #ccc;
+}
+
+/* Info block below cover — padding-top makes room for avatar */
 .headerInfo {
-  padding: 60px 20px 0;
+  padding: 52px 20px 0;
 }
 
 .nameRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   flex-wrap: wrap;
 }
 
@@ -98,6 +113,40 @@
   background: #16a34a;
 }
 
+.soldTag {
+  display: inline-flex;
+  align-items: center;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #dc2626;
+  letter-spacing: 0.06em;
+  background: #fee2e2;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.soldMsg {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #555;
+  margin-top: 8px;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tag {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e91e8c;
+}
+
 .seePlansBtn {
   display: flex;
   align-items: center;
@@ -115,9 +164,7 @@
   margin-bottom: 4px;
 }
 
-.seePlansBtn:hover {
-  background: #c71578;
-}
+.seePlansBtn:hover { background: #c71578; }
 
 /* ══════════════════════════════
    GALLERY
@@ -160,6 +207,21 @@
 }
 
 /* ══════════════════════════════
+   VIDEO
+══════════════════════════════ */
+.videoWrap {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 20px;
+}
+
+.video {
+  width: 100%;
+  border-radius: 14px;
+  display: block;
+}
+
+/* ══════════════════════════════
    PRICING
 ══════════════════════════════ */
 .pricing {
@@ -179,11 +241,8 @@
   border: 2px solid transparent;
 }
 
-.planHighlight {
-  border-color: #e91e8c;
-}
+.planHighlight { border-color: #e91e8c; }
 
-/* "Most Popular" stamp */
 .popularBadge {
   position: absolute;
   top: -16px;
@@ -195,7 +254,6 @@
   font-weight: 800;
   letter-spacing: 0.06em;
   text-align: center;
-  padding: 8px 10px;
   border-radius: 50%;
   width: 56px;
   height: 56px;
@@ -232,7 +290,6 @@
   margin-bottom: 16px;
 }
 
-/* price box */
 .priceBox {
   display: inline-flex;
   align-items: baseline;
@@ -243,9 +300,7 @@
   margin-bottom: 20px;
 }
 
-.priceBoxPink {
-  background: #e91e8c;
-}
+.priceBoxPink { background: #e91e8c; }
 
 .price {
   font-family: "Inter", sans-serif;
@@ -288,7 +343,6 @@
   color: #222;
 }
 
-/* exclusive bonus block */
 .bonus {
   display: flex;
   align-items: center;
@@ -299,10 +353,7 @@
   margin-bottom: 16px;
 }
 
-.bonusIcon {
-  font-size: 22px;
-  flex-shrink: 0;
-}
+.bonusIcon { font-size: 22px; flex-shrink: 0; }
 
 .bonusLabel {
   font-family: "Inter", sans-serif;
@@ -335,7 +386,6 @@
   margin-bottom: 10px;
 }
 
-/* buy button */
 .buyBtn {
   display: flex;
   align-items: center;
@@ -353,21 +403,14 @@
   transition: opacity 150ms;
 }
 
-.buyBtn:hover {
-  opacity: 0.85;
-}
-
-.buyBtnPink {
-  background: #e91e8c;
-}
+.buyBtn:hover { opacity: 0.85; }
+.buyBtnPink { background: #e91e8c; }
 
 /* ══════════════════════════════
    DESKTOP
 ══════════════════════════════ */
 @media (min-width: 900px) {
-  .coverWrap {
-    height: 360px;
-  }
+  .coverWrap { height: 360px; }
 
   .pricing {
     flex-direction: row;
@@ -376,81 +419,16 @@
     padding: 24px 24px 0;
   }
 
-  .planCard {
-    flex: 1;
-  }
+  .planCard { flex: 1; }
 
   .gallery {
     max-width: 800px;
-    padding: 24px 24px;
+    padding: 24px;
   }
 
   .headerInfo {
     max-width: 800px;
     margin: 0 auto;
-    padding: 60px 24px 0;
+    padding: 52px 24px 0;
   }
-}
-
-/* ══════════════════════════════
-   MISSING CLASSES
-══════════════════════════════ */
-.soldTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: "Inter", sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: #dc2626;
-  letter-spacing: 0.06em;
-  background: #fee2e2;
-  padding: 3px 10px;
-  border-radius: 999px;
-}
-
-.soldMsg {
-  font-family: "Inter", sans-serif;
-  font-size: 15px;
-  color: #555;
-  margin-top: 8px;
-}
-
-.tagRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.tag {
-  font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  color: #e91e8c;
-}
-
-.coverPlaceholder {
-  width: 100%;
-  height: 100%;
-  background: #ddd;
-}
-
-.avatarPlaceholder {
-  width: 100%;
-  height: 100%;
-  background: #ccc;
-  border-radius: 50%;
-}
-
-.videoWrap {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 16px 20px;
-}
-
-.video {
-  width: 100%;
-  border-radius: 14px;
-  display: block;
 }
