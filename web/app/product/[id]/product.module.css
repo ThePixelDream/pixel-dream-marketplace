@@ -2,25 +2,27 @@
 
 .page {
   min-height: 100vh;
-  background: #fff5f8; /* Tom sutil e limpo de fundo da referência */
+  background: #fff5f8;
   padding-bottom: 60px;
   max-width: 700px;
   margin: 0 auto;
   width: 100%;
 }
 
-/* ── HEADER ── */
+/* ── HEADER (Corrigido o bug do avatar oculto) ── */
 .header { 
   margin-bottom: 16px; 
   background: #fff;
   padding-bottom: 20px;
+  position: relative;
+  z-index: 1; /* Cria um contexto limpo */
 }
 
 .coverWrap {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 7;
-  overflow: hidden;
+  overflow: visible; /* Permite o avatar estourar a borda para baixo livremente */
   background: #eee;
 }
 
@@ -49,7 +51,7 @@
   overflow: hidden;
   background: #eee;
   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-  z-index: 10;
+  z-index: 9999 !important; /* Força o avatar a ficar no topo absoluto de qualquer borda */
 }
 
 .avatar { 
@@ -162,20 +164,30 @@
   text-decoration: none; 
 }
 
-/* ── GALERIA DE MÍDIAS (Restaurada para 3 Colunas Perfeitas) ── */
+/* ── MÍDIAS EM FORMATO CARROSSEL HORIZONTAL (Grande, Fluido e sem Quebras) ── */
 .mediaRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
   gap: 12px;
   padding: 16px;
+  overflow-x: auto !important; /* Adiciona scroll horizontal fluído no mobile */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mediaRow::-webkit-scrollbar {
+  display: none; /* Esconde a barra nativa */
 }
 
 .mediaItem {
+  flex: 0 0 62% !important; /* Define uma largura excelente para ver as imagens grandes no celular */
   position: relative;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   aspect-ratio: 3 / 4;
   background: #ddd;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
 .mediaImg, .mediaVideo {
@@ -185,33 +197,12 @@
   display: block; 
 }
 
-.mediaBadge {
-  position: absolute; 
-  bottom: 10px; 
-  right: 10px;
-  width: 22px; 
-  height: 22px;
-  background: #e91e8c; 
-  border-radius: 50%;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  border: 1.5px solid #fff;
-}
-
-/* ── TABELA DE PREÇOS (3 colunas com rolagem lateral se a tela for menor que 650px) ── */
+/* ── PRICING (Ajustado para se comportar estritamente idêntico ao Desktop OK) ── */
 .pricing {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   padding: 16px;
-  overflow-x: auto; /* Permite scroll horizontal fluido se o celular for muito estreito */
-  scrollbar-width: none; /* Oculta barra no Firefox */
-  -webkit-overflow-scrolling: touch;
-}
-
-.pricing::-webkit-scrollbar {
-  display: none; /* Oculta barra no Chrome/Safari */
 }
 
 .planCard {
@@ -222,9 +213,7 @@
   border: 1.5px solid #f2f2f2;
   display: flex;
   flex-direction: column;
-  flex: 0 0 calc(33.333% - 7px); /* Divide a linha em 3 blocos fixos idênticos */
-  min-width: 195px; /* Evita que o card colapse em celulares muito pequenos */
-  box-sizing: border-box;
+  min-width: 0;
 }
 
 .planHighlight { 
@@ -266,7 +255,7 @@
   font-family: "Inter", sans-serif;
   font-size: 10px; 
   font-weight: 600; 
-  color: #666; 
+  color: #e91e8c; 
   margin-bottom: 12px;
 }
 
@@ -274,7 +263,6 @@
   display: none; 
 }
 
-/* Caixa de Preço Rosa Maciço */
 .priceBox {
   display: flex; 
   align-items: center; 
@@ -324,7 +312,6 @@
   white-space: nowrap;
 }
 
-/* Bloco de Bônus */
 .bonus {
   display: flex; 
   align-items: center; 
@@ -371,7 +358,6 @@
   margin-bottom: 6px;
 }
 
-/* Botão de Compra */
 .buyBtn {
   display: flex; 
   align-items: center; 
@@ -387,15 +373,19 @@
   text-decoration: none;
 }
 
-/* ── CONFIGURAÇÕES PARA DISPOSITIVOS GRANDES ── */
+/* ── ADAPTAÇÃO COMPLETA PARA MÍDIAS EM TELAS GRANDES ── */
 @media (min-width: 650px) {
-  .pricing {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+  .mediaRow {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 12px;
+    overflow-x: visible !important;
   }
-  .planCard {
-    flex: none;
-    min-width: 0;
+  .mediaItem {
+    flex: none !important;
+    width: 100% !important;
+  }
+  .pricing {
+    gap: 14px;
   }
 }
