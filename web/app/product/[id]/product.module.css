@@ -220,6 +220,11 @@
   height: 100%;
   object-fit: cover; 
   display: block; 
+
+  /* ── PROTEÇÃO CONTRA DOWNLOADS ── */
+  pointer-events: none;       /* Desativa cliques, arraste e o menu do botão direito nas mídias */
+  user-select: none;          /* Impede o usuário de selecionar a imagem */
+  -webkit-touch-callout: none; /* Desativa o menu pop-up de salvar ao segurar o dedo no mobile (Safari/Chrome iOS) */
 }
 
 @keyframes mediaMarqueeAnimate {
