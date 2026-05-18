@@ -69,15 +69,15 @@
 
 /* CORREÇÃO: Reduzido o padding superior de 55px para 42px para aproximar o Nome da Foto de Perfil */
 .headerInfo { 
-  padding: 42px 20px 0; 
+  padding: 34px 20px 0 !important; /* Puxa o Nome mais para cima da foto de perfil */
 }
 
 .nameRow {
-  display: flex; 
-  align-items: center; 
-  gap: 10px;
-  margin-bottom: 10px; /* Reduzida a distância para as tags */
-  flex-wrap: wrap;
+  display: inline-flex !important; 
+  align-items: center !important; 
+  gap: 8px !important;
+  margin-bottom: 4px !important; /* Cola a hashtag quase colada no Nome */
+  flex-wrap: wrap !important;
 }
 
 .modelName {
