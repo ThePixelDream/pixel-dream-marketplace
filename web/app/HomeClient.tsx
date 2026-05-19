@@ -3,7 +3,7 @@
 // web/app/HomeClient.tsx
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link"; // <-- ADICIONE APENAS ESTA LINHA AQUI!
+import Link from "next/link";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const allVideos = [...videoUrls, ...videoUrls];
@@ -86,7 +86,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
     window.addEventListener("pageshow", handlePageShow);
     document.addEventListener("visibilitychange", handleVisibility);
 
-    ) => {
+    return () => {
       window.removeEventListener("pageshow", handlePageShow);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
@@ -94,7 +94,6 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
 
   return (
     <>
-
       <main>
         <div className="hero-band">
           <section className="hero">
