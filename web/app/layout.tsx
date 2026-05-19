@@ -1,8 +1,15 @@
 // web/app/layout.tsx
+import "./globals.css";
+import type { Metadata, Viewport } from "next";
+import Header from "./components/Header";
 
-// ... seus outros imports e metadata ...
+export const metadata: Metadata = {
+  title: "The Pixel Dream — AI OFM",
+  description:
+    "Ultra realistic AI models built to monetize. Licensing, acquisition, and creator revenue.",
+};
 
-// CORRIGIDO: Removida a linha do backgroundColor que causava o erro
+// Aqui fica apenas o themeColor, sem aquela propriedade que quebrou o TypeScript
 export const viewport: Viewport = {
   themeColor: "#000000",
 };
@@ -33,7 +40,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Header /> {/* <-- O cabeçalho inserido aqui vai aparecer no topo de TODAS as páginas */}
+        <Header />
         {children}
       </body>
     </html>
