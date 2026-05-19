@@ -9,8 +9,10 @@ export const metadata: Metadata = {
     "Ultra realistic AI models built to monetize. Licensing, acquisition, and creator revenue.",
 };
 
+// 🌟 O SEGREDO DA ARCADS: Diz ao iOS que o app aceita dark mode no sistema
 export const viewport: Viewport = {
   themeColor: "#000000",
+  colorScheme: "dark light", 
 };
 
 export default function RootLayout({
@@ -21,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Força o modo web app e a barra preta com texto branco no iOS */}
+        {/* Tags que o iOS exige para ativar o comportamento de App Nativo */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
@@ -43,9 +45,6 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {/* 🌟 BLOCO INJETADO PARA DEIXAR A BARRA DO IPHONE PRETA */}
-        <div className="ios-status-bar-bg" />
-        
         <Header />
         {children}
       </body>
