@@ -9,10 +9,9 @@ export const metadata: Metadata = {
     "Ultra realistic AI models built to monetize. Licensing, acquisition, and creator revenue.",
 };
 
-// Configuração recomendada pelo DevTools para forçar a detecção escura no topo
 export const viewport: Viewport = {
   themeColor: "#000000",
-  colorScheme: "dark light",
+  colorScheme: "dark", // Força o sistema do navegador a renderizar os elementos nativos como dark
 };
 
 export default function RootLayout({
@@ -23,9 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Adicionando as diretivas de comportamento de cores para o iOS */}
         <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -45,8 +44,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Header />
-        {children}
+        {/* 🌟 ENVELOPE ESCURO DO SISTEMA: Tudo dentro daqui roda isolado */}
+        <div id="app-root">
+          <Header />
+          {children}
+        </div>
       </body>
     </html>
   );
