@@ -1,12 +1,18 @@
 // web/app/layout.tsx
 import "./globals.css";
-import type { Metadata } from "next";
-import Header from "./components/Header"; // <-- Importando o novo cabeçalho global
+import type { Metadata, Viewport } from "next"; // <-- Adicionamos "Viewport" aqui
+import Header from "./components/Header";
 
 export const metadata: Metadata = {
   title: "The Pixel Dream — AI OFM",
   description:
     "Ultra realistic AI models built to monetize. Licensing, acquisition, and creator revenue.",
+};
+
+// 🌟 ADICIONE ESTE BLOCO AQUI PARA FORÇAR A BARRA DO IPHONE A FICAR PRETA:
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  backgroundColor: "#000000",
 };
 
 export default function RootLayout({
