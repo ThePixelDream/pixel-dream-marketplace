@@ -1,6 +1,7 @@
+// web/app/layout.tsx
 import "./globals.css";
-
 import type { Metadata } from "next";
+import Header from "./components/Header"; // <-- Importando o novo cabeçalho global
 
 export const metadata: Metadata = {
   title: "The Pixel Dream — AI OFM",
@@ -33,7 +34,10 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <Header /> {/* <-- O cabeçalho inserido aqui vai aparecer no topo de TODAS as páginas */}
+        {children}
+      </body>
     </html>
   );
 }
