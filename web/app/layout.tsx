@@ -1,18 +1,10 @@
 // web/app/layout.tsx
-import "./globals.css";
-import type { Metadata, Viewport } from "next"; // <-- Adicionamos "Viewport" aqui
-import Header from "./components/Header";
 
-export const metadata: Metadata = {
-  title: "The Pixel Dream — AI OFM",
-  description:
-    "Ultra realistic AI models built to monetize. Licensing, acquisition, and creator revenue.",
-};
+// ... seus outros imports e metadata ...
 
-// 🌟 ADICIONE ESTE BLOCO AQUI PARA FORÇAR A BARRA DO IPHONE A FICAR PRETA:
+// CORRIGIDO: Removida a linha do backgroundColor que causava o erro
 export const viewport: Viewport = {
   themeColor: "#000000",
-  backgroundColor: "#000000",
 };
 
 export default function RootLayout({
