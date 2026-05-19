@@ -1,5 +1,10 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { 
+  scroll-behavior: smooth; 
+  /* 🌟 TRUQUE DO IPHONE: Força a raiz extrema do documento a ser preta, 
+     o que obriga o iOS a pintar a barra de notificações de preto */
+  background-color: #000000 !important; 
+}
 :root {
   --page: #f5f5f7;
   --surface: #ffffff;
@@ -14,7 +19,8 @@ html { scroll-behavior: smooth; }
 }
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--page);
+  /* Mantém o fundo original do seu site cinza claro */
+  background: var(--page); 
   color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
