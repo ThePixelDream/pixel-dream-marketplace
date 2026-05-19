@@ -86,7 +86,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
     window.addEventListener("pageshow", handlePageShow);
     document.addEventListener("visibilitychange", handleVisibility);
 
-    return () => {
+    ) => {
       window.removeEventListener("pageshow", handlePageShow);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
@@ -94,25 +94,6 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
 
   return (
     <>
-      <header className="nav">
-        <div className="nav__inner">
-          <a href="/" className="nav__brand" aria-label="The Pixel Dream home">
-            <img
-              className="nav__mark"
-              src="/assets/nav-heart.png"
-              alt=""
-              width={33}
-              height={28}
-              decoding="async"
-              aria-hidden="true"
-            />
-            <span className="nav__brand-text">The Pixel Dream</span>
-          </a>
-          <div className="nav__actions">
-            <a className="nav__login" href="/login">Login · Sign up</a>
-          </div>
-        </div>
-      </header>
 
       <main>
         <div className="hero-band">
