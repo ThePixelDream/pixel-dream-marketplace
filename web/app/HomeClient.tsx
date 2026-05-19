@@ -258,8 +258,8 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
           <div className="footer__col">
             <h4>Quick Links</h4>
             <ul>
-              <li><a href="/">Home</a></li>
-              <li><a href="/marketplace">Marketplace</a></li>
+              <li><Link href="/">Home</Link></li>
+              <li><Link href="/marketplace">Marketplace</Link></li>
               <li><a href="#workflow">More Services</a></li>
             </ul>
           </div>
@@ -268,9 +268,9 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         <div className="footer__bottom">
           <p className="copy">Copyright © 2026 The Pixel Dream</p>
           <div className="footer__legal">
-            <a href="#">Help &amp; support</a>
-            <a href="#">Terms</a>
-            <a href="#">Privacy</a>
+            <Link href="/support">Help &amp; support</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/privacy">Privacy</Link>
           </div>
         </div>
       </footer>
