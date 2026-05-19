@@ -9,7 +9,6 @@ export const metadata: Metadata = {
     "Ultra realistic AI models built to monetize. Licensing, acquisition, and creator revenue.",
 };
 
-// Aqui fica apenas o themeColor, sem aquela propriedade que quebrou o TypeScript
 export const viewport: Viewport = {
   themeColor: "#000000",
 };
@@ -22,6 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Força o iOS a aplicar a barra de status preta com textos brancos */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
