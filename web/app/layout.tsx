@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Força o iOS a aplicar a barra de status preta com textos brancos */}
+        {/* Força o modo web app e a barra preta com texto branco no iOS */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
@@ -43,6 +43,9 @@ export default function RootLayout({
         />
       </head>
       <body>
+        {/* 🌟 BLOCO INJETADO PARA DEIXAR A BARRA DO IPHONE PRETA */}
+        <div className="ios-status-bar-bg" />
+        
         <Header />
         {children}
       </body>
