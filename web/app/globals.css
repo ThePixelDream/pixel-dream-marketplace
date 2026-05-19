@@ -1,9 +1,11 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { 
+/* 🌟 A MUDANÇA RADICAL: A raiz do sistema agora é preta absoluta */
+html, body { 
   scroll-behavior: smooth; 
-  /* 🌟 Sugestão do DevTools: Evita que o "efeito mola" do iPhone revele fundos claros */
-  overscroll-behavior-y: none; 
+  background-color: #000000 !important;
+  color: #0f0f10;
+  overscroll-behavior-y: none;
 }
 
 :root {
@@ -19,32 +21,30 @@ html {
   --radius: 22px;
 }
 
+/* 🌟 ONDE O SEU SITE REALMENTE COMEÇA: Ele herda a cor clara original */
+#app-root {
+  background-color: var(--page);
+  color: var(--text);
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--page);
-  color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
 
-/* 🌟 A MÁGICA DA ARCADS NO CSS DO CABEÇALHO FIXED/STICKY */
+/* Deixe o seu cabeçalho colado e limpo */
 .nav {
   position: sticky;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 100;
-  background-color: var(--surface); /* Mantém o fundo claro original do seu menu */
-}
-
-/* No mobile, aplicamos o tratamento de área segura do iPhone */
-@media (max-width: 768px) {
-  .nav {
-    /* Cria um espaçamento interno superior idêntico ao tamanho da barra do iPhone */
-    padding-top: env(safe-area-inset-top, 0px);
-    
-    /* Uma borda preta cirúrgica de 1px bem no limite superior, fazendo o Safari entender que o topo é preto */
-    border-top: 1px solid #000000;
-  }
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 a { color: inherit; text-decoration: none; }
