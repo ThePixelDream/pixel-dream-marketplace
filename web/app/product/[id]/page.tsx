@@ -3,6 +3,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./product.module.css";
 
 export const dynamic = "force-dynamic";
@@ -65,12 +66,41 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       <div className={styles.header}>
         <div className={styles.coverWrap}>
           {product.cover_image_url
-            ? <img src={product.cover_image_url} alt={product.title} className={styles.cover} draggable="false" />
+            ? (
+              /*
+                next/image para o cover: LCP candidate na primeira dobra.
+                - priority=true: pré-carrega com <link rel="preload"> automático
+                - fill: ocupa 100% do container com aspect-ratio definido no CSS
+                - unoptimized=false: Vercel Image Optimization serve WebP/AVIF
+                - Nota: para URLs externas do Supabase Storage, adicionar o hostname
+                  em next.config.ts (images.remotePatterns)
+              */
+              <Image
+                src={product.cover_image_url}
+                alt={product.title}
+                className={styles.cover}
+                fill
+                priority
+                sizes="(max-width: 700px) 100vw, 700px"
+                style={{ objectFit: "cover", objectPosition: "center" }}
+                draggable={false}
+              />
+            )
             : <div className={styles.coverPlaceholder} />
           }
           <div className={styles.avatarWrap}>
             {product.avatar_image_url
-              ? <img src={product.avatar_image_url} alt="" className={styles.avatar} draggable="false" />
+              ? (
+                <Image
+                  src={product.avatar_image_url}
+                  alt=""
+                  className={styles.avatar}
+                  fill
+                  sizes="84px"
+                  style={{ objectFit: "cover" }}
+                  draggable={false}
+                />
+              )
               : <div className={styles.avatarPlaceholder} />
             }
           </div>

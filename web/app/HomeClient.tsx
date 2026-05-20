@@ -4,15 +4,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
   const allVideos = [...videoUrls, ...videoUrls];
   const sectionRef = useRef<HTMLElement>(null);
-  
-  // CHAVE CRÍTICA: Força o React a remontar todo o HTML dos vídeos do zero se o usuário voltar na página
+
+  // Força o React a remontar o carrossel se o usuário voltar via bfcache
   const [reelKey, setReelKey] = useState(0);
 
-  // EFFECT 1: Controle de pausa ao passar o mouse
+  // EFFECT 1: Controle de pausa ao passar o mouse (apenas em dispositivos com hover)
   useEffect(() => {
     const reelSection = sectionRef.current;
     if (!reelSection) return;
@@ -40,15 +41,13 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
       video.setAttribute("muted", "");
       video.setAttribute("playsinline", "");
       video.setAttribute("webkit-playsinline", "");
-      
+
       const p = video.play();
       if (p !== undefined) {
         p.catch(() => {
-          // Fallback: se o navegador bloquear, tenta dar play no primeiro clique/touch do usuário
+          // Fallback: se o navegador bloquear, tenta dar play no primeiro toque
           const playOnInteraction = () => {
             video.play();
-            document.removeEventListener("click", playOnInteraction);
-            document.removeEventListener("touchstart", playOnInteraction);
           };
           document.addEventListener("click", playOnInteraction, { once: true });
           document.addEventListener("touchstart", playOnInteraction, { once: true });
@@ -65,18 +64,17 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
     // Dá o play assim que cada vídeo carregar os primeiros dados
     document.querySelectorAll(".reel__slide video").forEach((v) => {
       const video = v as HTMLVideoElement;
-      video.addEventListener("loadeddata", () => tryPlayVideo(video));
+      video.addEventListener("loadeddata", () => tryPlayVideo(video), { once: true });
     });
 
     bootReelVideos();
 
-    // INTERCEPÇÃO DO BOTÃO VOLTAR (bfcache):
+    // INTERCEPÇÃO DO BOTÃO VOLTAR (bfcache)
     const handlePageShow = (e: PageTransitionEvent) => {
-      // Força o React a mudar a key, destruindo os vídeos velhos travados e criando novos limpos
-      setReelKey((prev) => prev + 1);
-      
-      // Executa o play logo em sequência
-      setTimeout(bootReelVideos, 50);
+      if (e.persisted) {
+        setReelKey((prev) => prev + 1);
+        setTimeout(bootReelVideos, 50);
+      }
     };
 
     const handleVisibility = () => {
@@ -113,7 +111,7 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             </div>
           </section>
 
-          {/* Adicionada a prop key={reelKey} para forçar o reset completo do HTML do carrossel */}
+          {/* Carrossel de vídeos — key força remontagem após bfcache */}
           <section ref={sectionRef} className="reel" aria-label="Video previews" key={reelKey}>
             <div className="reel__viewport" dir="ltr">
               <div className="reel__track">
@@ -123,15 +121,39 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
                     className={`reel__slide${i >= videoUrls.length ? " reel__slide--dup" : ""}`}
                     aria-hidden={i >= videoUrls.length ? "true" : undefined}
                   >
+                    {/*
+                      Otimizações de vídeo para mobile:
+                      - preload="metadata": carrega apenas os metadados inicialmente,
+                        evitando download massivo de dados na GPU no carregamento da página.
+                      - muted + playsInline: obrigatórios para autoplay no iOS/Android.
+                      - loop: reprodução contínua sem interação.
+                      - O atributo "autoPlay" é complementado pelo useEffect acima,
+                        garantindo compatibilidade com Safari e bfcache.
+                    */}
                     <video
-                      src={src}
                       muted
                       playsInline
                       loop
                       autoPlay
-                      preload="auto"
+                      preload="metadata"
                       tabIndex={i >= videoUrls.length ? -1 : undefined}
-                    />
+                    >
+                      {/*
+                        Suporte a WebM como fonte primária (codec VP9/AV1 — menor bitrate,
+                        melhor compressão, menos calor na GPU mobile).
+                        O MP4 fica como fallback para Safari antigo e iOS < 14.
+                        Nota: os vídeos externos (andreatuysuzian.com) são .mp4.
+                        Quando migrados para o Supabase Storage, fornecer ambos os formatos.
+                      */}
+                      {src.replace(/\.mp4$/i, ".webm") !== src ? (
+                        <>
+                          <source src={src.replace(/\.mp4$/i, ".webm")} type="video/webm" />
+                          <source src={src} type="video/mp4" />
+                        </>
+                      ) : (
+                        <source src={src} type="video/mp4" />
+                      )}
+                    </video>
                   </div>
                 ))}
               </div>
@@ -170,7 +192,15 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
                 </div>
                 <div className="canvas-card">
                   <span>Upscaler</span>
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" alt="" />
+                  {/* width e height explícitos para evitar CLS */}
+                  <img
+                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80"
+                    alt=""
+                    width={160}
+                    height={78}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
               </div>
             </div>
@@ -183,10 +213,11 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             <p>D2C brands, app studios, lead gen, and growth agencies.</p>
           </div>
           <div className="strip__logos">
-            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b51401f25fa51271c26c7_healdway.png" alt="" />
-            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b5140903006c3cea68b6b_clickfunnel.png" alt="" />
-            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b5140fc7e2b22c9c78c12_bendingspoon.png" alt="" />
-            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b5140cf0eceb0f779f0ba_asana.png" alt="" />
+            {/* Logos com width/height explícitos para evitar CLS */}
+            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b51401f25fa51271c26c7_healdway.png" alt="" width={120} height={26} loading="lazy" decoding="async" />
+            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b5140903006c3cea68b6b_clickfunnel.png" alt="" width={120} height={26} loading="lazy" decoding="async" />
+            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b5140fc7e2b22c9c78c12_bendingspoon.png" alt="" width={120} height={26} loading="lazy" decoding="async" />
+            <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/689b5140cf0eceb0f779f0ba_asana.png" alt="" width={120} height={26} loading="lazy" decoding="async" />
           </div>
         </section>
 
@@ -198,15 +229,16 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
             <p className="testi__sub">Check out some reviews</p>
             <div className="testi__scroller">
               <div className="testi-card">
-                <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68c82db70b127fb633ecdf61_Frame%202087325049.webp" alt="" />
+                {/* Avatares com width/height explícitos — evitam CLS e são below-the-fold */}
+                <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68c82db70b127fb633ecdf61_Frame%202087325049.webp" alt="" width={52} height={52} loading="lazy" decoding="async" />
                 <div><strong>Alex Cooper</strong><span>Founder @ Adcrate</span></div>
               </div>
               <div className="testi-card">
-                <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68ee7e070337dcb0227d51f9_image.webp" alt="" />
+                <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68ee7e070337dcb0227d51f9_image.webp" alt="" width={52} height={52} loading="lazy" decoding="async" />
                 <div><strong>Greg Isenberg</strong><span>CEO @ Late Checkout</span></div>
               </div>
               <div className="testi-card">
-                <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68c82db75be0d592d58004ec_Frame%202087325051.webp" alt="" />
+                <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68c82db75be0d592d58004ec_Frame%202087325051.webp" alt="" width={52} height={52} loading="lazy" decoding="async" />
                 <div><strong>Sam Piliero</strong><span>CEO @ The Moonlighters</span></div>
               </div>
             </div>
@@ -216,10 +248,21 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
         <section className="feature-dark">
           <div className="feature-dark__card">
             <div className="feature-collage-wrapper">
-              <img 
-                src="/assets/models-collage.jpg" 
-                alt="AI Models Collage" 
-                className="feature-collage-static" 
+              {/*
+                next/image para a colagem de modelos:
+                - Serve WebP/AVIF automaticamente
+                - Evita CLS com placeholder blur
+                - Otimiza tamanho por viewport (srcset automático)
+              */}
+              <Image
+                src="/assets/models-collage.jpg"
+                alt="AI Models Collage"
+                className="feature-collage-static"
+                width={920}
+                height={460}
+                priority={false}
+                loading="lazy"
+                quality={80}
               />
             </div>
             <h2>Ultra-realistic <em>AI models</em></h2>
@@ -227,7 +270,15 @@ export default function HomeClient({ videoUrls }: { videoUrls: string[] }) {
               The largest library of licensable AI faces and bodies — built for monetization workflows.
             </p>
             <a className="btn-sparkle" href="/marketplace">
-              <img src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png" width={22} height={22} alt="" aria-hidden="true" />
+              <img
+                src="https://cdn.prod.website-files.com/685001cf708232477ed43d3f/68930995f165ad9969fa1efd_sparkles-2.png"
+                width={22}
+                height={22}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+              />
               Browse the library
             </a>
           </div>

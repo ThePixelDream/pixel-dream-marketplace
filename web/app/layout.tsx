@@ -1,7 +1,41 @@
 // web/app/layout.tsx
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import { Inter, Fraunces, Funnel_Display } from "next/font/google";
+import localFont from "next/font/local";
 import Header from "./components/Header";
+
+// ─── Fontes via next/font/google (zero render-blocking, auto-hosted) ─────────
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  // Fraunces é uma fonte variável — sem weight fixo, axes podem ser usados
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  display: "swap",
+  variable: "--font-fraunces",
+});
+
+const funnelDisplay = Funnel_Display({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  display: "swap",
+  variable: "--font-funnel-display",
+});
+
+// ─── Fonte local: Redaction 35 (não disponível no Google Fonts) ──────────────
+const redaction35 = localFont({
+  src: "./fonts/Redaction35-Italic.otf",
+  display: "swap",
+  variable: "--font-redaction35",
+  style: "italic",
+});
 
 export const metadata: Metadata = {
   title: "The Pixel Dream — AI OFM",
@@ -11,7 +45,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#000000",
-  colorScheme: "dark", // Força o sistema do navegador a renderizar os elementos nativos como dark
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -20,31 +54,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      className={`${inter.variable} ${fraunces.variable} ${funnelDisplay.variable} ${redaction35.variable}`}
+    >
       <head>
         <meta name="theme-color" content="#000000" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@fontsource/redaction-35@5.2.5/400-italic.css"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@fontsource/redaction-35@5.2.5/700-italic.css"
-          crossOrigin="anonymous"
-        />
+        {/*
+          CDNs externos removidos (fonts.googleapis.com, cdn.jsdelivr.net).
+          Todas as fontes agora são servidas pelo next/font — auto-hospedadas
+          na Vercel, com font-display: swap e sem render-blocking.
+        */}
       </head>
       <body>
-        {/* 🌟 ENVELOPE ESCURO DO SISTEMA: Tudo dentro daqui roda isolado */}
         <div id="app-root">
           <Header />
           {children}
