@@ -115,6 +115,8 @@ export async function POST(request: Request) {
     mode: "payment",
     customer_email: userData.user.email ?? undefined,
     line_items: lineItems,
+    // Adaptive Pricing: exibe seletor de moeda local (BRL, EUR, etc.) no checkout
+    adaptive_pricing: { enabled: true },
     success_url: `${origin}/account?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url:  `${origin}/product/${product.id}`,
     metadata: {
