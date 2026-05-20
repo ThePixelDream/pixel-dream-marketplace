@@ -6,12 +6,16 @@
 //   3. Faz upsert em `entitlements` (libera o produto para o usuário)
 //   4. Registra comissão de afiliado em `commissions` se aplicável
 //   5. Marca o produto como `sold = true` (produto é exclusivo/único)
+//
+// SUPORTE A PAYMENT LINKS:
+//   Quando o checkout vem de um Payment Link (em vez de Checkout Session dinâmica),
+//   o user_id chega via `session.client_reference_id` (não em metadata.user_id).
+//   O product_id é resolvido via `session.line_items[0].price.id` → lookup no Supabase.
 
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
-// Necessário para que o Next.js não faça parse do body antes do Stripe verificar a assinatura
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
@@ -47,17 +51,92 @@ export async function POST(request: Request) {
     const session = event.data.object as any;
     const meta = (session.metadata ?? {}) as Record<string, string>;
 
-    const userId        = meta.user_id?.trim();
-    const productId     = meta.product_id?.trim();
-    const plan          = (meta.plan ?? "basic").trim() as "basic" | "pro" | "premium";
+    // ── Resolver user_id ──────────────────────────────────────────────────
+    // Prioridade:
+    //   1. session.client_reference_id  → Payment Link (novo fluxo)
+    //   2. metadata.user_id             → Checkout Session dinâmica (legado)
+    const userId = (session.client_reference_id ?? meta.user_id ?? "").trim();
+
+    // ── Resolver product_id ───────────────────────────────────────────────
+    // Prioridade:
+    //   1. metadata.product_id          → Checkout Session dinâmica (legado)
+    //   2. Lookup via stripe_price_id   → Payment Link (novo fluxo)
+    let productId = (meta.product_id ?? "").trim();
+    let plan = (meta.plan ?? "").trim() as "basic" | "pro" | "premium";
     const affiliateCode = (meta.affiliate_code ?? "").trim();
 
-    if (!userId || !productId) {
-      console.warn("[Webhook] Missing user_id or product_id in metadata", meta);
-      return NextResponse.json({ received: true, warning: "Missing metadata" });
+    const admin = createSupabaseAdminClient();
+
+    // Se não temos product_id no metadata, resolvemos via price_id do Payment Link
+    if (!productId) {
+      // Expandir line_items para obter o price.id
+      let priceId: string | null = null;
+      try {
+        const sessionWithItems = await stripe.checkout.sessions.retrieve(session.id, {
+          expand: ["line_items.data.price"],
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const firstItem = (sessionWithItems.line_items?.data ?? [])[0] as any;
+        priceId = firstItem?.price?.id ?? null;
+      } catch (e) {
+        console.error("[Webhook] Failed to expand line_items:", e);
+      }
+
+      if (priceId) {
+        // Buscar o produto pelo stripe_price_id (qualquer plano)
+        const { data: productRow } = await admin
+          .from("products")
+          .select("id, stripe_price_basic_id, stripe_price_pro_id, stripe_price_premium_id, stripe_payment_link_basic_id, stripe_payment_link_pro_id, stripe_payment_link_premium_id")
+          .or(
+            `stripe_price_basic_id.eq.${priceId},` +
+            `stripe_price_pro_id.eq.${priceId},` +
+            `stripe_price_premium_id.eq.${priceId}`
+          )
+          .maybeSingle();
+
+        if (productRow) {
+          productId = productRow.id;
+          // Determinar o plano pelo price_id
+          if (priceId === productRow.stripe_price_basic_id)   plan = "basic";
+          else if (priceId === productRow.stripe_price_pro_id)   plan = "pro";
+          else if (priceId === productRow.stripe_price_premium_id) plan = "premium";
+          else plan = "basic";
+        } else {
+          // Tentar lookup via payment_link_id
+          const paymentLinkId = session.payment_link ?? null;
+          if (paymentLinkId) {
+            const { data: productByLink } = await admin
+              .from("products")
+              .select("id, stripe_payment_link_basic_id, stripe_payment_link_pro_id, stripe_payment_link_premium_id")
+              .or(
+                `stripe_payment_link_basic_id.eq.${paymentLinkId},` +
+                `stripe_payment_link_pro_id.eq.${paymentLinkId},` +
+                `stripe_payment_link_premium_id.eq.${paymentLinkId}`
+              )
+              .maybeSingle();
+
+            if (productByLink) {
+              productId = productByLink.id;
+              if (paymentLinkId === productByLink.stripe_payment_link_basic_id)   plan = "basic";
+              else if (paymentLinkId === productByLink.stripe_payment_link_pro_id)   plan = "pro";
+              else if (paymentLinkId === productByLink.stripe_payment_link_premium_id) plan = "premium";
+              else plan = "basic";
+            }
+          }
+        }
+      }
     }
 
-    const admin = createSupabaseAdminClient();
+    if (!plan) plan = "basic";
+
+    if (!userId || !productId) {
+      console.warn("[Webhook] Missing user_id or product_id", {
+        userId, productId, meta,
+        client_reference_id: session.client_reference_id,
+        payment_link: session.payment_link,
+      });
+      return NextResponse.json({ received: true, warning: "Missing user_id or product_id" });
+    }
 
     // ── 3a. Idempotência: verificar se já processamos esta sessão ──────────
     const { data: existingOrder } = await admin
@@ -71,9 +150,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true, duplicate: true });
     }
 
-    // ── 3b. Criar registro em `orders` (schema real de produção) ──────────
-    // Colunas reais: id, product_id, user_id, plan, amount_cents, currency,
-    //               status, payment_method, payment_id, affiliate_code, created_at, paid_at
+    // ── 3b. Criar registro em `orders` ────────────────────────────────────
     const { data: order, error: orderErr } = await admin
       .from("orders")
       .insert({
@@ -84,7 +161,7 @@ export async function POST(request: Request) {
         currency:       session.currency ?? "usd",
         status:         "paid",
         payment_method: "stripe",
-        payment_id:     session.id,           // stripe checkout session id (idempotência)
+        payment_id:     session.id,
         affiliate_code: affiliateCode || null,
         paid_at:        new Date().toISOString(),
       })
@@ -118,17 +195,15 @@ export async function POST(request: Request) {
 
     if (entErr) {
       console.error("[Webhook] Failed to create entitlement:", entErr);
-      // Não retorna erro — o order já foi criado; entitlement pode ser reprocessado
     }
 
-    // ── 3e. Marcar produto como sold (produtos são exclusivos/únicos) ──────
+    // ── 3e. Marcar produto como sold ──────────────────────────────────────
     await admin
       .from("products")
       .update({ sold: true, sold_at: new Date().toISOString(), sold_to: userId })
       .eq("id", productId);
 
     // ── 3f. Registrar comissão de afiliado ────────────────────────────────
-    // Tabela real: commissions(id, affiliate_id, order_id, amount_cents, rate, status, created_at, paid_at)
     if (affiliateCode) {
       const { data: affiliateProfile } = await admin
         .from("profiles")
@@ -136,11 +211,8 @@ export async function POST(request: Request) {
         .eq("affiliate_code", affiliateCode)
         .maybeSingle();
 
-      if (
-        affiliateProfile?.id &&
-        affiliateProfile.id !== userId // não comissionar a si mesmo
-      ) {
-        const rate = 0.20; // 20% de comissão
+      if (affiliateProfile?.id && affiliateProfile.id !== userId) {
+        const rate = 0.20;
         const amount = Math.max(0, Math.round((session.amount_total ?? 0) * rate));
         await admin.from("commissions").insert({
           affiliate_id: affiliateProfile.id,
@@ -158,6 +230,7 @@ export async function POST(request: Request) {
       user_id:    userId,
       product_id: productId,
       plan,
+      source: session.client_reference_id ? "payment_link" : "checkout_session",
     });
   }
 

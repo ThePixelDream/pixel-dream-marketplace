@@ -1,8 +1,6 @@
 // web/app/product/[id]/page.tsx
-
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import styles from "./product.module.css";
 
@@ -12,30 +10,36 @@ const PLANS = [
   {
     id: "basic", name: "BASIC", subtitle: "Starter Content Pack",
     description: "Essential content to get your Instagram moving.",
-    priceKey: "price_basic" as const, highlight: false, bonus: null,
+    priceKey: "price_basic" as const,
+    linkKey: "stripe_payment_link_basic" as const,
+    highlight: false, bonus: null,
     items: ["25 Instagram Posts","10 Instagram Stories","10 Instagram Reels","5 NSFW Wall Posts","5 NSFW Images","1 NSFW Banner","LoRA"],
   },
   {
     id: "pro", name: "PRO", subtitle: "Most Popular",
     description: "The perfect balance of content and value for consistent growth.",
-    priceKey: "price_pro" as const, highlight: true, bonus: null,
+    priceKey: "price_pro" as const,
+    linkKey: "stripe_payment_link_pro" as const,
+    highlight: true, bonus: null,
     items: ["50 Instagram Posts","20 Instagram Stories","25 Instagram Reels","10 NSFW Wall Posts","10 NSFW Images","1 NSFW Banner","LoRA"],
   },
   {
     id: "premium", name: "PREMIUM", subtitle: "Maximum Impact",
     description: "Maximize your presence with high-volume content and premium assets.",
-    priceKey: "price_premium" as const, highlight: false, bonus: "300 Premium Prompts Pack",
+    priceKey: "price_premium" as const,
+    linkKey: "stripe_payment_link_premium" as const,
+    highlight: false, bonus: "300 Premium Prompts Pack",
     items: ["80 Instagram Posts","30 Instagram Stories","40 Instagram Reels","20 NSFW Wall Posts","20 NSFW Images","1 NSFW Banner","Custom LoRA"],
   },
 ];
 
 function CheckIcon() {
   return (
-    <svg 
-      width="10" 
-      height="10" 
-      viewBox="0 0 24 24" 
-      fill="none" 
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 24 24"
+      fill="none"
       style={{ flexShrink: 0, marginTop: "2px", width: "10px", height: "10px" }}
     >
       <rect width="24" height="24" rx="5" fill="#e91e8c" />
@@ -56,6 +60,22 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
   if (!product) notFound();
 
+  // Obter o usuário logado para injetar client_reference_id no Payment Link
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData?.user?.id ?? null;
+  const userEmail = userData?.user?.email ?? null;
+
+  // Constrói a URL do Payment Link com client_reference_id e prefilled_email
+  function buildPaymentUrl(baseUrl: string | null): string {
+    const loginRedirect = `/login?next=${encodeURIComponent(`/product/${product.id}#plans`)}`;
+    if (!baseUrl) return loginRedirect;
+    if (!userId) return loginRedirect;
+    const url = new URL(baseUrl);
+    url.searchParams.set("client_reference_id", userId);
+    if (userEmail) url.searchParams.set("prefilled_email", userEmail);
+    return url.toString();
+  }
+
   const gallery: string[] = product.gallery_urls ?? [];
   const videoUrl: string = product.video_url ?? "";
 
@@ -67,14 +87,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         <div className={styles.coverWrap}>
           {product.cover_image_url
             ? (
-              /*
-                next/image para o cover: LCP candidate na primeira dobra.
-                - priority=true: pré-carrega com <link rel="preload"> automático
-                - fill: ocupa 100% do container com aspect-ratio definido no CSS
-                - unoptimized=false: Vercel Image Optimization serve WebP/AVIF
-                - Nota: para URLs externas do Supabase Storage, adicionar o hostname
-                  em next.config.ts (images.remotePatterns)
-              */
               <Image
                 src={product.cover_image_url}
                 alt={product.title}
@@ -141,27 +153,27 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       {(gallery.length > 0 || videoUrl) && (
         <div className={styles.mediaRow}>
           <div className={styles.mediaTrack}>
-            
+
             {/* PRIMEIRA LEVA (Original) */}
             {gallery.map((url, i) => (
               <div key={`orig-img-${i}`} className={styles.mediaItem}>
-                <img 
-                  src={url} 
-                  alt="" 
-                  className={styles.mediaImg} 
-                  draggable="false" 
+                <img
+                  src={url}
+                  alt=""
+                  className={styles.mediaImg}
+                  draggable="false"
                 />
               </div>
             ))}
             {videoUrl && (
               <div className={styles.mediaItem}>
-                <video 
-                  src={videoUrl} 
-                  className={styles.mediaVideo} 
-                  muted 
-                  playsInline 
-                  loop 
-                  autoPlay 
+                <video
+                  src={videoUrl}
+                  className={styles.mediaVideo}
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
                   draggable="false"
                 />
               </div>
@@ -170,23 +182,23 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             {/* SEGUNDA LEVA (Cópia para o efeito de loop) */}
             {gallery.map((url, i) => (
               <div key={`dup-img-${i}`} className={`${styles.mediaItem} ${styles.mediaItemDup}`} aria-hidden="true">
-                <img 
-                  src={url} 
-                  alt="" 
-                  className={styles.mediaImg} 
-                  draggable="false" 
+                <img
+                  src={url}
+                  alt=""
+                  className={styles.mediaImg}
+                  draggable="false"
                 />
               </div>
             ))}
             {videoUrl && (
               <div className={styles.mediaItem} aria-hidden="true">
-                <video 
-                  src={videoUrl} 
-                  className={styles.mediaVideo} 
-                  muted 
-                  playsInline 
-                  loop 
-                  autoPlay 
+                <video
+                  src={videoUrl}
+                  className={styles.mediaVideo}
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
                   draggable="false"
                 />
               </div>
@@ -201,6 +213,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         <div id="plans" className={styles.pricing}>
           {PLANS.map((plan) => {
             const price = product[plan.priceKey] as number;
+            const paymentUrl = buildPaymentUrl(product[plan.linkKey] as string | null);
             return (
               <div key={plan.id} className={`${styles.planCard} ${plan.highlight ? styles.planHighlight : ""}`}>
                 {plan.highlight && (
@@ -216,7 +229,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   <span className={styles.price}>${(price / 100).toFixed(0)}</span>
                   <span className={styles.pricePer}>/one-time</span>
                 </div>
-                
+
                 <ul className={styles.planList}>
                   {plan.items.map((item) => (
                     <li key={item} className={styles.planItem}>
@@ -235,7 +248,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                     </div>
                   </div>
                 )}
-                
+
                 <div className={styles.divider} />
                 <div className={styles.alsoLabel}>ALL PLANS ALSO INCLUDE</div>
                 <ul className={styles.planList} style={{ marginBottom: 20 }}>
@@ -247,12 +260,19 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   ))}
                 </ul>
 
-                <Link
-                  href={`/checkout?plan=${plan.id}&product=${product.id}`}
+                {/*
+                  Payment Link direto com client_reference_id injetado server-side.
+                  Se o usuário não estiver logado, redireciona para /login.
+                  target="_blank" abre o Stripe em nova aba (melhor UX em mobile).
+                */}
+                <a
+                  href={paymentUrl}
                   className={styles.buyBtn}
+                  target={userId ? "_blank" : "_self"}
+                  rel="noopener noreferrer"
                 >
                   Get {plan.name}
-                </Link>
+                </a>
               </div>
             );
           })}
