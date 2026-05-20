@@ -417,16 +417,37 @@ function ProductForm({
       if (isEdit) {
         const { data, error } = await sb().from("products").update(payload).eq("id", initialData!.id).select().single();
         if (error) throw error;
+        // Sincronizar com Stripe (atualiza nome/descrição e cria novos prices)
+        await syncWithStripe(data.id);
         onSave(data as Product);
       } else {
         const { data, error } = await sb().from("products").insert({ ...payload, active: true, sold: false }).select().single();
         if (error) throw error;
+        // Sincronizar com Stripe (cria Product + 3 Prices e salva IDs no Supabase)
+        await syncWithStripe(data.id);
         onSave(data as Product);
       }
     } catch (e: unknown) {
       setMsg("❌ " + (e instanceof Error ? e.message : String(e)));
     }
     setLoading(false);
+  }
+
+  async function syncWithStripe(productId: string) {
+    try {
+      const res = await fetch("/api/admin/sync-stripe-product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product_id: productId }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.warn("[Stripe sync] failed:", err);
+        setMsg((prev) => prev + " ⚠️ Stripe sync falhou (verifique o console). Produto salvo no Supabase.");
+      }
+    } catch (e) {
+      console.warn("[Stripe sync] network error:", e);
+    }
   }
 
   return (
